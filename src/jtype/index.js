@@ -67,6 +67,10 @@ class JType {
         return this._states[lastIndex];
     }
 
+    _$getStates () {
+        return this._states;
+    }
+
     _$addMatcher (func) {
         this._matchers.push({
             func

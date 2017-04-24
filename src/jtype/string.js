@@ -19,14 +19,19 @@ const EMPTY_STATE = -1;
 const LENGTH_STATE = 1;
 
 const LENGTH_STATE_ERROR_TIP = 'use equal, notEqual, gt, lt, gte, lte function after length';
+const ERROR_LENGTH_STATE_ERROR_TIP = 'should not use \'length\' before includes, startsWith, endsWith';
+
 const NOT_REGEXP_ERROR_TIP = 'pass RegExp to matchRegexp';
 const NOT_FUNC_ERROR_TIP = 'pass Function to matchFunction';
+
+const JStringStates = {
+    length: 'length'
+};
 
 class JTypeString extends JType {
     constructor (returnControl) {
         super(returnControl);
 
-        this._setState(EMPTY_STATE);
         this._$addMatcher(value => this._isString(value));
     }
 
@@ -34,18 +39,31 @@ class JTypeString extends JType {
         return typeof value === 'string';
     }
 
-    _setState (state) {
-        this._state = state;
+    _isValidLengthState () {
+        const states = this._$getStates();
+        const statesCount = states.length;
+
+        if (states[statesCount - 1] === JStringStates.length) {
+            return true;
+        } else if (states[statesCount - 2] === JStringStates.length && states[statesCount - 1] === JStates.not) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    _inState (targetState) {
-        return this._state === targetState;
+    _isNotTheCurrentState () {
+        const currentState = this._$getCurrentState();
+
+        if (currentState === JStates.not) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     get empty () {
-        let currentState = this._$getCurrentState();
-
-        if (currentState === JStates.not) {
+        if (this._isNotTheCurrentState()) {
             this._$popState();
             this._$addMatcher(value => !this._isEmptyString(value));
         } else {
@@ -65,46 +83,77 @@ class JTypeString extends JType {
     }
 
     equal (compareTarget) {
-        assert(LENGTH_STATE_ERROR_TIP, this._inState(LENGTH_STATE));
+        assert(LENGTH_STATE_ERROR_TIP, this._isValidLengthState());
+
+        if (this._isNotTheCurrentState()) {
+            this._$popState();
+            this._$addMatcher(value => !new JTypeNumber().equal(compareTarget).isMatch(value.length));
+        } else {
+            this._$addMatcher(value => new JTypeNumber().equal(compareTarget).isMatch(value.length));
+        }
 
         this._$popState();
-        this._$addMatcher(value => new JTypeNumber().equal(compareTarget).isMatch(value.length));
         return this;
     }
 
     gt (compareTarget) {
-        assert(LENGTH_STATE_ERROR_TIP, this._inState(LENGTH_STATE));
+        assert(LENGTH_STATE_ERROR_TIP, this._isValidLengthState());
+
+        if (this._isNotTheCurrentState()) {
+            this._$popState();
+            this._$addMatcher(value => !new JTypeNumber().gt(compareTarget).isMatch(value.length));
+        } else {
+            this._$addMatcher(value => new JTypeNumber().gt(compareTarget).isMatch(value.length));
+        }
 
         this._$popState();
-        this._$addMatcher(value => new JTypeNumber().gt(compareTarget).isMatch(value.length));
         return this;
     }
 
     lt (compareTarget) {
-        assert(LENGTH_STATE_ERROR_TIP, this._inState(LENGTH_STATE));
+        assert(LENGTH_STATE_ERROR_TIP, this._isValidLengthState());
+
+        if (this._isNotTheCurrentState()) {
+            this._$popState();
+            this._$addMatcher(value => !new JTypeNumber().lt(compareTarget).isMatch(value.length));
+        } else {
+            this._$addMatcher(value => new JTypeNumber().lt(compareTarget).isMatch(value.length));
+        }
 
         this._$popState();
-        this._$addMatcher(value => new JTypeNumber().lt(compareTarget).isMatch(value.length));
         return this;
     }
 
     gte (compareTarget) {
-        assert(LENGTH_STATE_ERROR_TIP, this._inState(LENGTH_STATE));
+        assert(LENGTH_STATE_ERROR_TIP, this._isValidLengthState());
+
+        if (this._isNotTheCurrentState()) {
+            this._$popState();
+            this._$addMatcher(value => !new JTypeNumber().gte(compareTarget).isMatch(value.length));
+        } else {
+            this._$addMatcher(value => new JTypeNumber().gte(compareTarget).isMatch(value.length));
+        }
 
         this._$popState();
-        this._$addMatcher(value => new JTypeNumber().gte(compareTarget).isMatch(value.length));
         return this;
     }
 
     lte (compareTarget) {
-        assert(LENGTH_STATE_ERROR_TIP, this._inState(LENGTH_STATE));
+        assert(LENGTH_STATE_ERROR_TIP, this._isValidLengthState());
 
-        this._setState(EMPTY_STATE);
-        this._$addMatcher(value => new JTypeNumber().lte(compareTarget).isMatch(value.length));
+        if (this._isNotTheCurrentState()) {
+            this._$popState();
+            this._$addMatcher(value => !new JTypeNumber().lte(compareTarget).isMatch(value.length));
+        } else {
+            this._$addMatcher(value => new JTypeNumber().lte(compareTarget).isMatch(value.length));
+        }
+
+        this._$popState();
         return this;
     }
 
     includes (subString) {
+        assert()
         this._$addMatcher(value => value.includes(subString));
         return this;
     }
