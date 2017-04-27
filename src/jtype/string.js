@@ -153,7 +153,7 @@ class JTypeString extends JType {
     }
 
     includes (subString) {
-        assert()
+        assert(ERROR_LENGTH_STATE_ERROR_TIP, )
         this._$addMatcher(value => value.includes(subString));
         return this;
     }

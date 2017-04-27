@@ -2,6 +2,10 @@
 
 'use strict';
 
+import {
+    StateMachine
+} from './StateMachine';
+
 const JStates = {
     not: 'not'
 };
