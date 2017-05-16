@@ -4,26 +4,26 @@
 
 import {
     JType
-} from './jtype';
+} from './index';
 
 class JTypeBool extends JType {
     constructor (returnControl) {
         super(returnControl);
 
-        this._addMatcher(value => this._isBool(value));
+        this._$addMatcher(value => this._isBool(value));
     }
 
     _isBool (value) {
-        return typeof value === 'bool';
+        return typeof value === 'boolean';
     }
 
     get truely () {
-        this._addMatcher(value => value === true);
+        this._$addMatcher(value => value === true);
         return this;
     }
 
     get falsely () {
-        this._addMatcher(value => value === false);
+        this._$addMatcher(value => value === false);
         return this;
     }
 }

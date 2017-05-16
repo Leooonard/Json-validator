@@ -5,7 +5,19 @@
 import {
     JType,
     JStates
-} from './jtype';
+} from './index';
+
+/*
+    gt,
+    gte,
+    lt,
+    lte,
+    equal,
+    notEqual,
+    zero,
+    positive,
+    negative
+*/
 
 class JTypeNumber extends JType {
     constructor (returnControl) {
@@ -19,15 +31,8 @@ class JTypeNumber extends JType {
     }
 
     gt (compareTarget) {
-        const currentState = this._$getCurrentState();
-
-        if (currentState === JStates.not) {
-            this._$popState();
-            return this.lte(compareTarget);
-        } else {
-            this._$addMatcher(value => this._isGreatThan(value, compareTarget));
-            return this;
-        }
+        this._$addMatcher(value => this._isGreatThan(value, compareTarget));
+        return this;
     }
 
     _isGreatThan (value, compareTarget) {
@@ -35,15 +40,8 @@ class JTypeNumber extends JType {
     }
 
     gte (compareTarget) {
-        const currentState = this._$getCurrentState();
-
-        if (currentState === JStates.not) {
-            this._$popState();
-            return this.lt(compareTarget);
-        } else {
-            this._$addMatcher(value => this._isGreatThanOrEqual(value, compareTarget));
-            return this;
-        }
+        this._$addMatcher(value => this._isGreatThanOrEqual(value, compareTarget));
+        return this;
     }
 
     _isGreatThanOrEqual (value, compareTarget) {
@@ -51,39 +49,22 @@ class JTypeNumber extends JType {
     }
 
     lt (compareTarget) {
-        const currentState = this._$getCurrentState();
-
-        if (currentState === JStates.not) {
-            this._$popState();
-            return this.gte(compareTarget);
-        } else {
-            this._$addMatcher(value => !this._isGreatThanOrEqual(value, compareTarget));
-            return this;
-        }
+        this._$addMatcher(value => !this._isGreatThanOrEqual(value, compareTarget));
+        return this;
     }
 
     lte (compareTarget) {
-        const currentState = this._$getCurrentState();
-
-        if (currentState === JStates.not) {
-            this._$popState();
-            return this.gt(compareTarget);
-        } else {
-            this._$addMatcher(value => !this._isGreatThan(value, compareTarget));
-            return this;
-        }
+        this._$addMatcher(value => !this._isGreatThan(value, compareTarget));
+        return this;
     }
 
     equal (compareTarget) {
-        const currentState = this._$getCurrentState();
+        this._$addMatcher(value => this._isEqual(value, compareTarget));
+        return this;
+    }
 
-        if (currentState === JStates.not) {
-            this._$popState();
-            this._$addMatcher(value => !this._isEqual(value, compareTarget));
-        } else {
-            this._$addMatcher(value => this._isEqual(value, compareTarget));
-        }
-
+    notEqual (compareTarget) {
+        this._$addMatcher(value => !this._isEqual(value, compareTarget));
         return this;
     }
 

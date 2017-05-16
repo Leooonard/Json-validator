@@ -2,10 +2,6 @@
 
 'use strict';
 
-import {
-    StateMachine
-} from './StateMachine';
-
 const JStates = {
     not: 'not'
 };
@@ -48,10 +44,10 @@ class JType {
         return this._returnControl();
     }
 
-    get not () {
-        this._$pushState();
-        return this;
-    }
+    // get not () {
+    //     this._$pushState();
+    //     return this;
+    // }
 
     get end () {
         return this._returnControl();
@@ -86,7 +82,7 @@ class JType {
     }
 
     isMatch (value) {
-        const matchers = this._getMatchers();
+        const matchers = this._$getMatchers();
 
         return matchers.every(matcher => matcher.func(value));
     }

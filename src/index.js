@@ -1,8 +1,6 @@
 /* @flow */
 
 class Joi {
-    _schema: Object;
-
     constructor (schema) {
         this._schema = schema;
     }

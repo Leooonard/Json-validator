@@ -2,7 +2,7 @@
 
 import {
     JTypeString
-} from '../../jtype/string';
+} from '../../src/jtype/string';
 
 describe('test JTypeBool\'s basic function', () => {
     let stringType = undefined;
@@ -17,7 +17,6 @@ describe('test JTypeBool\'s basic function', () => {
         });
 
         test('5 is not string', () => {
-            let stringType = new JTypeString();
             expect(stringType.isMatch(5)).not.toBeTruthy();
         });
     });
@@ -39,16 +38,6 @@ describe('test JTypeBool\'s basic function', () => {
 
         test('\'\' is not unEmpty string', () => {
             expect(stringType.unEmpty.isMatch('')).not.toBeTruthy();
-        });
-    });
-
-    describe('equal, unEqual, gt, lt, gte, lte can only be use after length', () => {
-        test('should not throw error when use equal after length', () => {
-            expect(stringType.length.equal(5).isMatch('12345')).toBeTruthy();
-        });
-
-        test('should throw error when use equal without length', () => {
-            expect(stringType.equal(5).isMatch('12345')).toThrow();
         });
     });
 
