@@ -13,7 +13,7 @@ describe('test JTypeBool\'s basic function', () => {
 
         test('5 is not bool', () => {
             let boolType = new JTypeBool();
-            expect(boolType.isMatch(5)).not.toBeTruthy();
+            expect(boolType.isMatch(5).message).toBe('not boolean type');
         })
     });
 
@@ -25,7 +25,7 @@ describe('test JTypeBool\'s basic function', () => {
 
         test('false should not equal true', () => {
             let boolType = new JTypeBool().truely;
-            expect(boolType.isMatch(false)).not.toBeTruthy();
+            expect(boolType.isMatch(false).message).toBe('not true value');
         });
     });
 
@@ -37,7 +37,7 @@ describe('test JTypeBool\'s basic function', () => {
 
         test('false should not equal true', () => {
             let boolType = new JTypeBool().falsely;
-            expect(boolType.isMatch(true)).not.toBeTruthy();
+            expect(boolType.isMatch(true).message).toBe('not false value');
         });
     });
 });

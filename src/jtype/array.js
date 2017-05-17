@@ -2,27 +2,31 @@
 
 'use strict';
 
-/*
-    array:
-        lengthEqual,
-        lengthNotEqual,
-        lengthGreatThan,
-        lengthLessThan,
-        lengthGreatThanOrEqual,
-        lengthLessThanOrEqual
-*/
-
 import {
     JType
-} from './jtype';
+} from './index';
+
+import {
+    JTypeNumber
+} from './number';
+
+/*
+    array:
+        equal,
+        gt,
+        gte,
+        lt,
+        lte,
+        matchChild
+*/
 
 class JTypeArray extends JType {
     constructor (returnControl) {
         super(returnControl);
 
-        this._addMatcher(value => {
-            this._isArray(value);
+        this._$addMatcher(value => {
             this._value = value;
+            return this._isArray(value);
         });
     }
 
@@ -34,8 +38,15 @@ class JTypeArray extends JType {
         return this;
     }
 
+    getValue () {
+        return this._value;
+    }
+
     matchChild (jType) {
-        this._value = this._value.filter(listItem => jType.isMatch(listItem));
+        this._$addMatcher(value => {
+            this._value = this._value.filter(listItem => jType.isMatch(listItem));
+            return true;
+        });
         return this;
     }
 

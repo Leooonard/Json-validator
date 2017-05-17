@@ -2,6 +2,37 @@
 
 'use strict';
 
+import {
+    wrapResult,
+    isSuccessResult,
+    getResultMessage
+} from '../util/result';
+
+/*
+         _____
+        |JType|__________________________________________________________
+         ̅̅̅̅̅             |               |              |              |
+           |               |               |              |              |
+      ___________     ___________      _________      __________     ___________
+     |JTypeNumber|   |JTypeString|    |JTypeBool|    |JTypeArray|   |JTypeObject|
+      ̅̅̅̅̅̅̅̅̅̅̅     ̅̅̅̅̅̅̅̅̅̅̅      ̅̅̅̅̅̅̅̅̅      ̅̅̅̅̅̅̅̅̅̅     ̅̅̅̅̅̅̅̅̅̅̅
+           |               |               |              |              |
+        ________        ________        ________       ________       ________
+       |Matchers|      |Matchers|      |Matchers|     |Matchers|     |Matchers|
+        ̅̅̅̅̅̅̅̅        ̅̅̅̅̅̅̅̅        ̅̅̅̅̅̅̅̅       ̅̅̅̅̅̅̅̅       ̅̅̅̅̅̅̅̅
+
+      1. JType开始。
+      2. 生成JTypeNumber | JTypeString | JTypeBool | JTypeArray | JTypeObject中的一个。
+      3. 使用subType的matcher方法。
+      4. 如果使用连词，不做操作直接返回subType本身。
+      5. 如果使用matcher，就在matchers数组里添加一个matcher。
+      6. 有一个特殊连词，or，使用后需要收集一个新的subType。
+
+      JType -> typeCollector -> typers -> matchers
+
+      JType -> typer -> matchers -> or -> typer -> matchers -> or -> typer -> matchers -> end
+*/
+
 const JStates = {
     not: 'not'
 };
@@ -37,12 +68,13 @@ class JType {
     get and () {
         return this;
     }
+
     // conjunction part end
 
     // functional conjunction start
-    get or () {
-        return this._returnControl();
-    }
+    // get or () {
+    //     return this._returnControl();
+    // }
 
     // get not () {
     //     this._$pushState();
@@ -84,7 +116,16 @@ class JType {
     isMatch (value) {
         const matchers = this._$getMatchers();
 
-        return matchers.every(matcher => matcher.func(value));
+        for (let i = 0 ; i < matchers.length ; i++) {
+            let matcher = matchers[i];
+            let result = matcher.func(value);
+
+            if (!isSuccessResult(result)) {
+                return wrapResult(false, getResultMessage(result));
+            }
+        }
+
+        return wrapResult(true);
     }
 }
 

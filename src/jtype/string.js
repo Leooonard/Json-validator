@@ -15,6 +15,10 @@ import {
     assert
 } from '../util/assert';
 
+import {
+    wrapResult
+} from '../util/result';
+
 /*
     equal,
     gt,
@@ -45,7 +49,10 @@ class JTypeString extends JType {
     constructor (returnControl) {
         super(returnControl);
 
-        this._$addMatcher(value => this._isString(value));
+        this._$addMatcher(value => wrapResult(
+            this._isString(value),
+            `${value} not string`
+        ));
     }
 
     _isString (value) {
@@ -53,12 +60,18 @@ class JTypeString extends JType {
     }
 
     get empty () {
-        this._$addMatcher(value => this._isEmptyString(value));
+        this._$addMatcher(value => wrapResult(
+            this._isEmptyString(value),
+            `${value} not empty`
+        ));
         return this;
     }
 
     get unEmpty () {
-        this._$addMatcher(value => !this._isEmptyString(value));
+        this._$addMatcher(value => wrapResult(
+            !this._isEmptyString(value),
+            `${value} not unEmpty`
+        ));
         return this;
     }
 
@@ -71,53 +84,95 @@ class JTypeString extends JType {
     }
 
     equal (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().equal(compareTarget).isMatch(value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().equal(compareTarget).isMatch(value.length),
+            `${value} length not equal ${compareTarget}`
+        ));
         return this;
     }
 
     gt (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().gt(compareTarget).isMatch(value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().gt(compareTarget).isMatch(value.length),
+            `${value} length not gt ${compareTarget}`
+        ));
         return this;
     }
 
     lt (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().lt(compareTarget).isMatch(value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().lt(compareTarget).isMatch(value.length),
+            `${value} length not lt ${compareTarget}`
+        ));
         return this;
     }
 
     gte (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().gte(compareTarget).isMatch(value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().gte(compareTarget).isMatch(value.length),
+            `${value} length not gte ${compareTarget}`
+        ));
         return this;
     }
 
     lte (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().lte(compareTarget).isMatch(value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().lte(compareTarget).isMatch(value.length),
+            `${value} length not lte ${compareTarget}`
+        ));
         return this;
     }
 
     includes (subString) {
-        this._$addMatcher(value => value.includes(subString));
+        this._$addMatcher(value => wrapResult(
+            value.includes(subString),
+            `${value} not includes ${subString}`
+        ));
         return this;
     }
 
     startsWith (subString) {
-        this._$addMatcher(value => value.startsWith(subString));
+        this._$addMatcher(value => wrapResult(
+            value.startsWith(subString),
+            `${value} not startsWith ${subString}`
+        ));
         return this;
     }
 
     endsWith (subString) {
-        this._$addMatcher(value => value.endsWith(subString));
+        this._$addMatcher(value => wrapResult(
+            value.endsWith(subString),
+            `${value} not endsWith ${subString}`
+        ));
         return this;
     }
 
     matchRegexp (regexp) {
-        this._$addMatcher(value => regexp.test(value));
+        assert(this._isRegexp(regexp), 'matchRegexp only accept a regexp parameter');
+
+        this._$addMatcher(value => wrapResult(
+            regexp.test(value),
+            `${value} not match ${regexp.source}`
+        ));
         return this;
     }
 
+    _isRegexp (regexp) {
+        return regexp instanceof RegExp;
+    }
+
     matchFunction (func) {
-        this._$addMatcher(value => func(value));
+        assert(this._isFunction(func), 'matchFunction only accpet a function parameter');
+
+        this._$addMatcher(value => wrapResult(
+            func(value),
+            `${value} not match function`
+        ));
         return this;
+    }
+
+    _isFunction (func) {
+        return typeof func === 'function';
     }
 }
 

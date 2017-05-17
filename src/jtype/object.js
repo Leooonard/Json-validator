@@ -4,13 +4,17 @@
 
 import {
     JType
-} from './jtype';
+} from './index';
+
+/*
+    matchShape
+*/
 
 class JTypeObject extends JType {
     constructor(returnControl) {
         super(returnControl);
 
-        this._addMatcher(value => this._isObject(value));
+        this._$addMatcher(value => this._isObject(value));
     }
 
     _isObject(value) {
@@ -18,7 +22,7 @@ class JTypeObject extends JType {
     }
 
     matchShape(shape) {
-        this._addMatcher(value => this._isMatchShape(value, shape));
+        this._$addMatcher(value => this._isMatchShape(value, shape));
         return this;
     }
 

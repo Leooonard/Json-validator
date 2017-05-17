@@ -22,6 +22,12 @@ import {
     JTypeObject
 } from './object';
 
+import {
+    wrapResult,
+    isSuccessResult,
+    getResultMessage
+} from '../util/result';
+
 const JTypes = {
     number: 1,
     string: 2,
@@ -32,9 +38,9 @@ const JTypes = {
 
 class JTypeCollector {
     constructor (type) {
+        this._returnControl = this._returnControl.bind(this);
         this._currentTyper = this._generateTyper(type);
         this._typers = [this._currentTyper];
-        this._returnControl = this._returnControl.bind(this);
 
         return this._currentTyper;
     }
@@ -106,14 +112,43 @@ class JTypeCollector {
         return currentTyper;
     }
 
+    static get bool () {
+        return new JTypeBool();
+    }
+
+    static get number () {
+        return new JTypeNumber();
+    }
+
+    static get string () {
+        return new JTypeString();
+    }
+
+    static get array () {
+        return new JTypeArray();
+    }
+
+    static get object () {
+        return new JTypeObject();
+    }
+
     isMatch (value) {
         const typers = this._getTypers();
 
-        return typers.every(typer => typer.isMatch(value));
+        for (let i = 0 ; i < typers.length ; i++) {
+            let typer = typers[i];
+            let result = typer.isMatch(value);
+
+            if (!isSuccessResult(result)) {
+                return wrapResult(false, getResultMessage(result));
+            }
+        }
+
+        return wrapResult(true);
     }
 }
 
 export {
-    JTypeCollector,
+    JTypeCollector as JTC,
     JTypes
 };

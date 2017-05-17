@@ -7,7 +7,12 @@ import {
     JStates
 } from './index';
 
+import {
+    wrapResult
+} from '../util/result';
+
 /*
+    inNumbers,
     gt,
     gte,
     lt,
@@ -23,15 +28,28 @@ class JTypeNumber extends JType {
     constructor (returnControl) {
         super(returnControl);
 
-        this._$addMatcher(value => this._isNumber(value));
+        this._$addMatcher(value => wrapResult(this._isNumber(value), 'not number type'));
     }
 
     _isNumber (value) {
         return typeof value === 'number';
     }
 
+    inNumbers (compareTargetList) {
+        this._$addMatcher(value => wrapResult(
+            compareTargetList.some(compareTarget => this._isEqual(value, compareTarget)),
+            `${value} not in ${compareTargetList}`
+        ));
+
+        return this;
+    }
+
     gt (compareTarget) {
-        this._$addMatcher(value => this._isGreatThan(value, compareTarget));
+        this._$addMatcher(value => wrapResult(
+            this._isGreatThan(value, compareTarget),
+            '${value} not gt ${compareTarget}'
+        ));
+
         return this;
     }
 
@@ -40,7 +58,11 @@ class JTypeNumber extends JType {
     }
 
     gte (compareTarget) {
-        this._$addMatcher(value => this._isGreatThanOrEqual(value, compareTarget));
+        this._$addMatcher(value => wrapResult(
+            this._isGreatThanOrEqual(value, compareTarget),
+            `${value} not gte ${compareTarget}`
+        ));
+
         return this;
     }
 
@@ -49,22 +71,38 @@ class JTypeNumber extends JType {
     }
 
     lt (compareTarget) {
-        this._$addMatcher(value => !this._isGreatThanOrEqual(value, compareTarget));
+        this._$addMatcher(value => wrapResult(
+            !this._isGreatThanOrEqual(value, compareTarget),
+            `${value} not lt ${compareTarget}`
+        ));
+
         return this;
     }
 
     lte (compareTarget) {
-        this._$addMatcher(value => !this._isGreatThan(value, compareTarget));
+        this._$addMatcher(value => wrapResult(
+            !this._isGreatThan(value, compareTarget),
+            `${value} not lte ${compareTarget}`
+        ));
+
         return this;
     }
 
     equal (compareTarget) {
-        this._$addMatcher(value => this._isEqual(value, compareTarget));
+        this._$addMatcher(value => wrapResult(
+            this._isEqual(value, compareTarget),
+            `${value} not equal ${compareTarget}`
+        ));
+
         return this;
     }
 
     notEqual (compareTarget) {
-        this._$addMatcher(value => !this._isEqual(value, compareTarget));
+        this._$addMatcher(value => wrapResult(
+            !this._isEqual(value, compareTarget),
+            `${value} not notEqual ${compareTarget}`
+        ));
+
         return this;
     }
 
@@ -72,18 +110,27 @@ class JTypeNumber extends JType {
         return value === compareTarget;
     }
 
-    zero () {
-        this._$addMatcher(value => this._isEqual(value, 0));
+    get zero () {
+        this._$addMatcher(value => wrapResult(
+            this._isEqual(value, 0),
+            `${value} not zero`
+        ));
         return this;
     }
 
-    positive () {
-        this._$addMatcher(value => this._isGreatThan(value, 0));
+    get positive () {
+        this._$addMatcher(value => wrapResult(
+            this._isGreatThan(value, 0),
+            `${value} not positive`
+        ));
         return this;
     }
 
-    negative () {
-        this._$addMatcher(value => !this._isGreatThanOrEqual(value, 0));
+    get negative () {
+        this._$addMatcher(value => wrapResult(
+            !this._isGreatThanOrEqual(value, 0),
+            `${value} not negative`
+        ));
         return this;
     }
 }
