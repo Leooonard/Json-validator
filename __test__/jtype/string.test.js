@@ -28,7 +28,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aaa\' is not empty string', () => {
-                expect(stringType.empty.isMatch('aaa').message).toBe('\'aaa\' not empty');
+                expect(stringType.empty.isMatch('aaa').message).toBe('aaa not empty');
             })
         });
 
@@ -38,7 +38,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'\' is not unEmpty string', () => {
-                expect(stringType.unEmpty.isMatch('').message).toBe('\'\' not unEmpty');
+                expect(stringType.unEmpty.isMatch('').message).toBe(' not unEmpty');
             });
         });
 
@@ -54,7 +54,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aaaa\' length should not equal 3', () => {
-                expect(stringType.length.equal(3).isMatch('aaaa')).toBe('\'aaaa\' length not equal 3');
+                expect(stringType.length.equal(3).isMatch('aaaa').message).toBe('aaaa length not equal 3');
             });
         });
 
@@ -64,7 +64,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aaa\' length should not gt 3', () => {
-                expect(stringType.length.gt(3).isMatch('aaa')).not.toBeTruthy();
+                expect(stringType.length.gt(3).isMatch('aaa').message).toBe('aaa length not gt 3');
             });
         });
 
@@ -78,7 +78,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aa\' length should not gte 3', () => {
-                expect(stringType.length.gte(3).isMatch('aa')).not.toBeTruthy();
+                expect(stringType.length.gte(3).isMatch('aa').message).toBe('aa length not gte 3');
             });
         });
 
@@ -88,7 +88,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aaaa\' length should not lt 3', () => {
-                expect(stringType.length.lt(3).isMatch('aaaa')).not.toBeTruthy();
+                expect(stringType.length.lt(3).isMatch('aaaa').message).toBe('aaaa length not lt 3');
             });
         });
 
@@ -102,7 +102,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aaaa\' length should not lte 3', () => {
-                expect(stringType.length.lte(3).isMatch('aaaa')).not.toBeTruthy();
+                expect(stringType.length.lte(3).isMatch('aaaa').message).toBe('aaaa length not lte 3');
             });
         });
 
@@ -112,7 +112,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'bbbaabbb\' should not includes \'aaa\'', () => {
-                expect(stringType.includes('aaa').isMatch('bbbaabbb')).not.toBeTruthy();
+                expect(stringType.includes('aaa').isMatch('bbbaabbb').message).toBe('bbbaabbb not includes aaa');
             });
         });
 
@@ -122,7 +122,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aabbb\' should not startsWith \'aaa\'', () => {
-                expect(stringType.startsWith('aaa').isMatch('aabbb')).not.toBeTruthy();
+                expect(stringType.startsWith('aaa').isMatch('aabbb').message).toBe('aabbb not startsWith aaa');
             });
         });
 
@@ -132,7 +132,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aaabb\' should not endsWith \'bbb\'', () => {
-                expect(stringType.endsWith('bbb').isMatch('aaabb')).not.toBeTruthy();
+                expect(stringType.endsWith('bbb').isMatch('aaabb').message).toBe('aaabb not endsWith bbb');
             });
         });
 
@@ -146,7 +146,7 @@ describe('test JTypeString', () => {
             });
 
             test('/^a+$/ should not match \'aaaaab\'', () => {
-                expect(stringType.matchRegexp(/^a+$/).isMatch('aaaaab')).not.toBeTruthy();
+                expect(stringType.matchRegexp(/^a+$/).isMatch('aaaaab').message).toBe('aaaaab not match ^a+$');
             });
         });
 
@@ -182,7 +182,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aaa\' should match regexp /^a+$/ and not match function that expect string \'bbb\'', () => {
-                expect(stringType.matchRegexp(/^a+$/).and.matchFunction(value => value === 'bbb').isMatch('aaa')).not.toBeTruthy();
+                expect(stringType.matchRegexp(/^a+$/).and.matchFunction(value => value === 'bbb').isMatch('aaa').message).toBe('aaa not match function');
             });
         });
 

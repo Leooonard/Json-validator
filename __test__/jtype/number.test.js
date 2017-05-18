@@ -25,7 +25,7 @@ describe('test JTypeNumber\'s basic function', () => {
 
         test('5 should not in numbers [1, 2]', () => {
             let numberType = new JTypeNumber().inNumbers([1, 2]);
-            expect(numberType.isMatch(5).message).toBe('5 not in [1, 2]');
+            expect(numberType.isMatch(5).message).toBe('5 not in [1,2]');
         });
     });
 
@@ -49,7 +49,7 @@ describe('test JTypeNumber\'s basic function', () => {
 
         test('5 should not lt 0', () => {
             let numberType = new JTypeNumber().lt(0);
-            expect(numberType.isMatch(5)).toBe('5 not lt 0');
+            expect(numberType.isMatch(5).message).toBe('5 not lt 0');
         });
     })
 
@@ -66,7 +66,7 @@ describe('test JTypeNumber\'s basic function', () => {
 
         test('0 should not gte 5', () => {
             let numberType = new JTypeNumber().gte(5);
-            expect(numberType.isMatch(0)).toBe('0 not gte 5');
+            expect(numberType.isMatch(0).message).toBe('0 not gte 5');
         });
     });
 
@@ -83,7 +83,7 @@ describe('test JTypeNumber\'s basic function', () => {
 
         test('5 should not lte 0', () => {
             let numberType = new JTypeNumber().lte(0);
-            expect(numberType.isMatch(5)).toBe('5 not lte 0');
+            expect(numberType.isMatch(5).message).toBe('5 not lte 0');
         });
     });
 
@@ -95,14 +95,14 @@ describe('test JTypeNumber\'s basic function', () => {
 
         test('5 should not equal 0', () => {
             let numberType = new JTypeNumber().equal(0);
-            expect(numberType.isMatch(5)).toBe('5 not equal 0');
+            expect(numberType.isMatch(5).message).toBe('5 not equal 0');
         });
     });
 
     describe('not equal', () => {
         test('5 should not equal 5', () => {
             let numberType = new JTypeNumber().notEqual(5);
-            expect(numberType.isMatch(5)).toBe('5 not notEqual 5');
+            expect(numberType.isMatch(5).message).toBe('5 not notEqual 5');
         });
 
         test('5 should not equal 0', () => {
@@ -119,7 +119,7 @@ describe('test JTypeNumber\'s basic function', () => {
 
         test('5 should not be 0', () => {
             let numberType = new JTypeNumber().zero;
-            expect(numberType.isMatch(5)).toBe('5 not zero');
+            expect(numberType.isMatch(5).message).toBe('5 not zero');
         });
     });
 
@@ -131,7 +131,7 @@ describe('test JTypeNumber\'s basic function', () => {
 
         test('-5 should not be positive', () => {
             let numberType = new JTypeNumber().positive;
-            expect(numberType.isMatch(-5)).toBe('-5 not positive');
+            expect(numberType.isMatch(-5).message).toBe('-5 not positive');
         });
     });
 
@@ -143,7 +143,7 @@ describe('test JTypeNumber\'s basic function', () => {
 
         test('5 should not be negative', () => {
             let numberType = new JTypeNumber().negative;
-            expect(numberType.isMatch(5)).toBe('5 not negative');
+            expect(numberType.isMatch(5).message).toBe('5 not negative');
         });
     });
 });
@@ -162,7 +162,7 @@ describe('test JTypeNumber\'s advanced function', () => {
 
         test('10 should gte 5 but not lt 10', () => {
             let numberType = new JTypeNumber().gte(5).lt(10);
-            expect(numberType.isMatch(10)).toBe('10 not lt 10');
+            expect(numberType.isMatch(10).message).toBe('10 not lt 10');
         });
 
         test('10 should gt 5 and lte 10', () => {
@@ -172,7 +172,7 @@ describe('test JTypeNumber\'s advanced function', () => {
 
         test('10 should gt 5 but not negative', () => {
             let numberType = new JTypeNumber().gt(5).and.negative;
-            expect(numberType.isMatch(10)).toBe('10 not negative');
+            expect(numberType.isMatch(10).message).toBe('10 not negative');
         });
     });
 });

@@ -30,17 +30,17 @@ describe('test JTypeArray', () => {
             });
 
             test('5 is not arary', () => {
-                expect(arrayType.isMatch(5)).not.toBeTruthy();
+                expect(arrayType.isMatch(5).message).toBe('5 not array');
             });
         });
 
-        describe('equal', () => {
+        describe('eq', () => {
             test('[]\'s length should equal 0', () => {
-                expect(arrayType.equal(0).isMatch([])).toBeTruthy();
+                expect(arrayType.eq(0).isMatch([])).toBeTruthy();
             });
 
             test('[]\'s length should not equal 5', () => {
-                expect(arrayType.equal(5).isMatch([])).not.toBeTruthy();
+                expect(arrayType.eq(5).isMatch([]).message).toBe('[] not equal 5');
             });
         });
 
@@ -50,7 +50,7 @@ describe('test JTypeArray', () => {
             });
 
             test('[1, 2, 3]\'s length should not gt 5', () => {
-                expect(arrayType.gt(5).isMatch([1, 2, 3])).not.toBeTruthy();
+                expect(arrayType.gt(5).isMatch([1, 2, 3]).message).toBe('[1,2,3] not gt 5');
             });
         });
 
@@ -60,7 +60,7 @@ describe('test JTypeArray', () => {
             });
 
             test('[1, 2, 3]\'s length should not lt 1', () => {
-                expect(arrayType.lt(1).isMatch([1, 2, 3])).not.toBeTruthy();
+                expect(arrayType.lt(1).isMatch([1, 2, 3]).message).toBe('[1,2,3] not lt 1');
             });
         });
 
@@ -74,7 +74,7 @@ describe('test JTypeArray', () => {
             })
 
             test('[1, 2, 3]\'s length should not gte 5', () => {
-                expect(arrayType.gte(5).isMatch([1, 2, 3])).not.toBeTruthy();
+                expect(arrayType.gte(5).isMatch([1, 2, 3]).message).toBe('[1,2,3] not gte 5');
             });
         });
 
@@ -88,49 +88,29 @@ describe('test JTypeArray', () => {
             })
 
             test('[1, 2, 3]\'s length should not lte 1', () => {
-                expect(arrayType.lte(1).isMatch([1, 2, 3])).not.toBeTruthy();
+                expect(arrayType.lte(1).isMatch([1, 2, 3]).message).toBe('[1,2,3] not lte 1');
             });
         });
 
         describe('matchChild', () => {
             test('[1, 2, 3] should match rules that expect positive number', () => {
                 let numberType = new JTypeNumber();
-                expect(arrayType.matchChild(numberType.positive).equal(3).isMatch([1, 2, 3])).toBeTruthy();
+                expect(arrayType.matchChild(numberType.positive).eq(3).isMatch([1, 2, 3])).toBeTruthy();
             });
 
             test('[\'a\', \'aa\', \'aaa\'] should match rules that expect specific string', () => {
                 let stringType = new JTypeString();
-                expect(arrayType.matchChild(stringType.matchRegexp(/^a+$/)).equal(3).isMatch(['a', 'aa', 'aaa'])).toBeTruthy();
+                expect(arrayType.matchChild(stringType.matchRegexp(/^a+$/)).eq(3).isMatch(['a', 'aa', 'aaa'])).toBeTruthy();
             });
         });
     });
 
     describe('test JTypeArray\'s advanced function', () => {
-        describe('equal', () => {
-            test('[]\'s length should equal 0', () => {
-                expect(arrayType.equal(0).isMatch([])).toBeTruthy();
-            });
-
-            test('[]\'s length should not equal 5', () => {
-                expect(arrayType.equal(5).isMatch([])).not.toBeTruthy();
-            });
-        });
-
-        describe('gt', () => {
-            test('[1, 2, 3]\'s length should gt 1', () => {
-                expect(arrayType.gt(1).isMatch([1, 2, 3])).toBeTruthy();
-            });
-
-            test('[1, 2, 3]\'s length should not gt 5', () => {
-                expect(arrayType.gt(5).isMatch([1, 2, 3])).not.toBeTruthy();
-            });
-        });
-
         describe('matchChild', () => {
             test('should only match child like {type: 1}', () => {
                 expect(arrayType.matchChild(new JTypeObject().matchShape({
                     type: new JTypeNumber().equal(1)
-                })).equal(1).isMatch([
+                })).eq(1).isMatch([
                     {
                         type: 1
                     },

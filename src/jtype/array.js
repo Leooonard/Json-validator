@@ -10,9 +10,14 @@ import {
     JTypeNumber
 } from './number';
 
+import {
+    wrapResult,
+    isSuccessResult
+} from '../util/result';
+
 /*
     array:
-        equal,
+        eq,
         gt,
         gte,
         lt,
@@ -26,7 +31,10 @@ class JTypeArray extends JType {
 
         this._$addMatcher(value => {
             this._value = value;
-            return this._isArray(value);
+            return wrapResult(
+                this._isArray(value),
+                `${value} not array`
+            );
         });
     }
 
@@ -44,34 +52,49 @@ class JTypeArray extends JType {
 
     matchChild (jType) {
         this._$addMatcher(value => {
-            this._value = this._value.filter(listItem => jType.isMatch(listItem));
+            this._value = this._value.filter(listItem => isSuccessResult(jType.isMatch(listItem)));
             return true;
         });
         return this;
     }
 
-    equal (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().equal(compareTarget).isMatch(this._value.length));
+    eq (compareTarget) {
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().equal(compareTarget).isMatch(this._value.length),
+            `[${value}] not equal ${compareTarget}`
+        ));
         return this;
     }
 
     gt (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().gt(compareTarget).isMatch(this._value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().gt(compareTarget).isMatch(this._value.length),
+            `[${value}] not gt ${compareTarget}`
+        ));
         return this;
     }
 
     lt (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().lt(compareTarget).isMatch(this._value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().lt(compareTarget).isMatch(this._value.length),
+            `[${value}] not lt ${compareTarget}`
+        ));
         return this;
     }
 
     gte (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().gte(compareTarget).isMatch(this._value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().gte(compareTarget).isMatch(this._value.length),
+            `[${value}] not gte ${compareTarget}`
+        ));
         return this;
     }
 
     lte (compareTarget) {
-        this._$addMatcher(value => new JTypeNumber().lte(compareTarget).isMatch(this._value.length));
+        this._$addMatcher(value => wrapResult(
+            new JTypeNumber().lte(compareTarget).isMatch(this._value.length),
+            `[${value}] not lte ${compareTarget}`
+        ));
         return this;
     }
 }

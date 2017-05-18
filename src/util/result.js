@@ -1,7 +1,7 @@
 // @flow
 
 function wrapResult (condition, message) {
-    if (condition) {
+    if (condition === true) {
         return true;
     } else {
         return {

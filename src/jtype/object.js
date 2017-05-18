@@ -6,6 +6,12 @@ import {
     JType
 } from './index';
 
+import {
+    wrapResult,
+    isSuccessResult,
+    getResultMessage
+} from '../util/result';
+
 /*
     matchShape
 */
@@ -14,7 +20,10 @@ class JTypeObject extends JType {
     constructor(returnControl) {
         super(returnControl);
 
-        this._$addMatcher(value => this._isObject(value));
+        this._$addMatcher(value => wrapResult(
+            this._isObject(value),
+            `${value} not object`
+        ));
     }
 
     _isObject(value) {
@@ -22,7 +31,15 @@ class JTypeObject extends JType {
     }
 
     matchShape(shape) {
-        this._$addMatcher(value => this._isMatchShape(value, shape));
+        this._$addMatcher(value => {
+            let result = this._isMatchShape(value, shape)
+
+            if (isSuccessResult(result)) {
+                return wrapResult(true);
+            } else {
+                return wrapResult(false, getResultMessage(result));
+            }
+        });
         return this;
     }
 
@@ -43,8 +60,8 @@ class JTypeObject extends JType {
                     findValueKey = true;
                     const isMatch = shapeProperty.isMatch(valueProperty);
 
-                    if (!isMatch) {
-                        return false;
+                    if (!isSuccessResult(isMatch)) {
+                        return wrapResult(false, `attribute ${shapeKey} not match shape , ${getResultMessage(isMatch)}`);
                     } else {
                         continue;
                     }
@@ -52,11 +69,11 @@ class JTypeObject extends JType {
             }
 
             if (!findValueKey) {
-                return false;
+                return wrapResult(false, 'not find ${shapeKey} in value');
             }
         }
 
-        return true;
+        return wrapResult(true);
     }
 }
 

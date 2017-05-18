@@ -34,11 +34,11 @@ describe('test JTypeObject', () => {
             });
 
             test('5 is not arary', () => {
-                expect(objectType.isMatch(5)).not.toBeTruthy();
+                expect(objectType.isMatch(5).message).toBe('5 not object');
             });
 
             test('null is not arary', () => {
-                expect(objectType.isMatch(null)).not.toBeTruthy();
+                expect(objectType.isMatch(null).message).toBe('null not object');
             });
         });
 
@@ -59,9 +59,10 @@ describe('test JTypeObject', () => {
 
             test('{a: \'aaaa\'} should not have a attribute a that value is match regexp /^a+b$/', () => {
                 let stringType = new JTypeString();
+
                 expect(objectType.matchShape({
                     a: stringType.matchRegexp(/^a+b$/)
-                }).isMatch({a: 'aaaa'})).not.toBeTruthy();
+                }).isMatch({a: 'aaaa'}).message).toMatch(/.+/);
             });
         });
     });
@@ -73,7 +74,7 @@ describe('test JTypeObject', () => {
                 which have attribute d`, () => {
                 expect(objectType.matchShape({
                     a: new JTypeNumber().gt(0),
-                    b: new JTypeArray().equal(2),
+                    b: new JTypeArray().eq(2),
                     c: new JTypeObject().matchShape({
                         d: new JTypeBool().truely
                     })

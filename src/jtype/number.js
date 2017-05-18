@@ -17,8 +17,8 @@ import {
     gte,
     lt,
     lte,
-    equal,
-    notEqual,
+    eq,
+    neq,
     zero,
     positive,
     negative
@@ -38,7 +38,7 @@ class JTypeNumber extends JType {
     inNumbers (compareTargetList) {
         this._$addMatcher(value => wrapResult(
             compareTargetList.some(compareTarget => this._isEqual(value, compareTarget)),
-            `${value} not in ${compareTargetList}`
+            `${value} not in [${compareTargetList}]`
         ));
 
         return this;
@@ -47,7 +47,7 @@ class JTypeNumber extends JType {
     gt (compareTarget) {
         this._$addMatcher(value => wrapResult(
             this._isGreatThan(value, compareTarget),
-            '${value} not gt ${compareTarget}'
+            `${value} not gt ${compareTarget}`
         ));
 
         return this;
@@ -88,7 +88,7 @@ class JTypeNumber extends JType {
         return this;
     }
 
-    equal (compareTarget) {
+    eq (compareTarget) {
         this._$addMatcher(value => wrapResult(
             this._isEqual(value, compareTarget),
             `${value} not equal ${compareTarget}`
@@ -97,7 +97,7 @@ class JTypeNumber extends JType {
         return this;
     }
 
-    notEqual (compareTarget) {
+    neq (compareTarget) {
         this._$addMatcher(value => wrapResult(
             !this._isEqual(value, compareTarget),
             `${value} not notEqual ${compareTarget}`

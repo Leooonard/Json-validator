@@ -11,7 +11,7 @@ describe('JTC', () => {
     });
 
     test('should not match this complex shape object', () => {
-        expect(new JTC(JTypes.object).matchShape({
+        const message = new JTC(JTypes.object).matchShape({
             name: JTC.string.lte(25).and.gte(5),
             phoneNumber: JTC.string.equal(11),
             age: JTC.number.lte(20).and.gte(12),
@@ -20,7 +20,7 @@ describe('JTC', () => {
                 type: JTC.number.inNumbers([1, 2]),
                 title: JTC.string.unEmpty,
                 content: JTC.string.unEmpty
-            })).and.equal(1)
+            })).and.eq(1)
         }).end.isMatch({
             name: 'aa/zz', // 姓名应该在5 - 25字范围。
             phoneNumber: '13681622894', // 电话号码长度必须是11位。
@@ -33,7 +33,9 @@ describe('JTC', () => {
                     content: 'hahaha'
                 },
             ], // noteList中必须包含type为1的数据，且对应的数据有非空的title和content字段。
-        })).not.toBeTruthy();
+        }).message;
+
+        expect(message).toMatch(/.+/);
     });
 
     test('should match this complex shape object', () => {
@@ -46,7 +48,7 @@ describe('JTC', () => {
                 type: JTC.number.equal(1),
                 title: JTC.string.unEmpty,
                 content: JTC.string.unEmpty
-            })).and.equal(1)
+            })).and.eq(1)
         }).end.isMatch({
             name: 'aa/zz',
             phoneNumber: '13681622894',
