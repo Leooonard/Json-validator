@@ -37,114 +37,76 @@ const JTypes = {
 };
 
 class JTypeCollector {
-    constructor (type) {
+    constructor () {
         this._returnControl = this._returnControl.bind(this);
-        this._currentTyper = this._generateTyper(type);
-        this._typers = [this._currentTyper];
-
-        return this._currentTyper;
-    }
-
-    _generateTyper (type) {
-        switch (type) {
-        case JTypes.number:
-            return new JTypeNumber(this._returnControl);
-        case JTypes.string:
-            return new JTypeString(this._returnControl);
-        case JTypes.bool:
-            return new JTypeBool(this._returnControl);
-        case JTypes.array:
-            return new JTypeArray(this._returnControl);
-        case JTypes.object:
-            return new JTypeObject(this._returnControl);
-        default:
-            throw new Error('unknown type');
-        }
-    }
-
-    _returnControl () {
-        return this;
+        this._typers = [];
     }
 
     _getTypers () {
         return this._typers;
     }
 
-    _addTyper (type) {
-        const typers = this._getTypers();
-        const currentTyper = this._generateTyper(type);
-        typers.push(currentTyper);
-
-        return currentTyper;
+    _addTyper (typer) {
+        this._typers.push(typer);
+        return typer;
     }
 
-    _setCurrentTyper (typer) {
-        this._currentTyper = typer;
-    }
-
-    get number () {
-        const currentTyper = this._addTyper(JTypes.number);
-        this._setCurrentTyper(currentTyper);
-        return currentTyper;
-    }
-
-    get string () {
-        const currentTyper = this._addTyper(JTypes.string);
-        this._setCurrentTyper(currentTyper);
-        return currentTyper;
-    }
-
-    get bool () {
-        const currentTyper = this._addTyper(JTypes.bool);
-        this._setCurrentTyper(currentTyper);
-        return currentTyper;
-    }
-
-    get array () {
-        const currentTyper = this._addTyper(JTypes.array);
-        this._setCurrentTyper(currentTyper);
-        return currentTyper;
-    }
-
-    get object () {
-        const currentTyper = this._addTyper(JTypes.object);
-        this._setCurrentTyper(currentTyper);
-        return currentTyper;
+    _returnControl () {
+        return this;
     }
 
     static get bool () {
-        return new JTypeBool();
+        const boolType = new JTypeBool(this._returnControl, this);
+        return this._addTyper(boolType);
     }
 
     static get number () {
-        return new JTypeNumber();
+        const numberType = new JTypeNumber(this._returnControl, this);
+        return this._addTyper(numberType);
     }
 
     static get string () {
-        return new JTypeString();
+        const stringType = new JTypeString(this._returnControl, this);
+        return this._addTyper(stringType);
     }
 
     static get array () {
-        return new JTypeArray();
+        const arrayType = new JTypeArray(this._returnControl, this);
+        return this._addTyper(arrayType);
     }
 
     static get object () {
-        return new JTypeObject();
+        const objectType = new JTypeObject(this._returnControl, this);
+        return this._addTyper(objectType);
     }
 
+    test (value) {
+        return this.isMatch(value);
+    }
+
+    filter (value) {
+        return this.isMatch(value);
+    }
+
+    /*
+        当前只支持使用or连接两个typer，所以只要满足其中任意一个即可。
+    */
     isMatch (value) {
         const typers = this._getTypers();
+        let errorMessage = '';
 
         for (let i = 0 ; i < typers.length ; i++) {
             let typer = typers[i];
             let result = typer.isMatch(value);
 
-            if (!isSuccessResult(result)) {
-                return wrapResult(false, getResultMessage(result));
+            if (isSuccessResult(result)) {
+                return wrapResult(true);
+            } else {
+                errorMessage = getResultMessage(result);
             }
         }
 
-        return wrapResult(true);
+        return wrapResult(false, errorMessage);
     }
 }
 

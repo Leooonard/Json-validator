@@ -8,6 +8,14 @@ import {
     getResultMessage
 } from '../util/result';
 
+import {
+    mixinCoujunction
+} from '../conjunction';
+
+import {
+    mixinOr
+} from '../conjunction/or';
+
 /*
          _____
         |JType|__________________________________________________________
@@ -38,38 +46,19 @@ const JStates = {
 };
 
 class JType {
-    constructor (returnControl) {
+    constructor (returnControl, collector) {
         this._matchers = [];
         this._states = [];
         this._returnControl = returnControl;
+        this._collector = collector;
+
+        mixinCoujunction(this);
+        mixinOr(this, this._returnControl);
     }
 
-    // conjunction part start
-    get is () {
-        return this;
+    getCollector () {
+        return this._collector;
     }
-
-    get to () {
-        return this;
-    }
-
-    get be () {
-        return this;
-    }
-
-    get should () {
-        return this;
-    }
-
-    get could () {
-        return this;
-    }
-
-    get and () {
-        return this;
-    }
-
-    // conjunction part end
 
     // functional conjunction start
     // get or () {
@@ -111,6 +100,14 @@ class JType {
 
     _$getMatchers () {
         return this._matchers;
+    }
+
+    test (value) {
+        return this.isMatch(value);
+    }
+
+    filter (value) {
+        return this.isMatch(value);
     }
 
     isMatch (value) {
