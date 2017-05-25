@@ -97,6 +97,14 @@ class JTypeArray extends JType {
         ));
         return this;
     }
+
+    filter (value) {
+        if (isSuccessResult(this._isMatch(value))) {
+            return this._value;
+        } else {
+            return undefined;
+        }
+    }
 }
 
 export {

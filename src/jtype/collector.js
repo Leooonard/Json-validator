@@ -28,14 +28,6 @@ import {
     getResultMessage
 } from '../util/result';
 
-const JTypes = {
-    number: 1,
-    string: 2,
-    bool: 3,
-    array: 4,
-    object: 5
-};
-
 class JTypeCollector {
     constructor () {
         this._returnControl = this._returnControl.bind(this);
@@ -81,11 +73,41 @@ class JTypeCollector {
     }
 
     test (value) {
-        return this.isMatch(value);
+        const typers = this._getTypers();
+        let errorResult = undefined;
+
+        let result = typers.some(typer => {
+            let result = typer.test(value);
+            if (!isSuccessResult(result)) {
+                errorResult = result;
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        if (result) {
+            return wrapResult(true);
+        } else {
+            return errorResult;
+        }
     }
 
     filter (value) {
-        return this.isMatch(value);
+        const typers = this._getTypers();
+        let filterResult = undefined;
+
+        typers.some(typer => {
+            let result = typer.filter(value);
+            if (result !== undefined) {
+                filterResult = result;
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        return filterResult;
     }
 
     /*

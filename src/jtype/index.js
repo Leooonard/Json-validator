@@ -103,14 +103,19 @@ class JType {
     }
 
     test (value) {
-        return this.isMatch(value);
+        return this._isMatch(value);
     }
 
     filter (value) {
-        return this.isMatch(value);
+        let result = this._isMatch(value);
+        if (isSuccessResult(result)) {
+            return value;
+        } else {
+            return undefined;
+        }
     }
 
-    isMatch (value) {
+    _isMatch (value) {
         const matchers = this._$getMatchers();
 
         for (let i = 0 ; i < matchers.length ; i++) {
