@@ -20,7 +20,7 @@ import {
 } from '../util/result';
 
 /*
-    equal,
+    eq,
     gt,
     gte,
     lt,
@@ -34,12 +34,6 @@ import {
 
 const EMPTY_STATE = -1;
 const LENGTH_STATE = 1;
-
-const LENGTH_STATE_ERROR_TIP = 'use equal, notEqual, gt, lt, gte, lte function after length';
-const ERROR_LENGTH_STATE_ERROR_TIP = 'should not use \'length\' before includes, startsWith, endsWith';
-
-const NOT_REGEXP_ERROR_TIP = 'pass RegExp to matchRegexp';
-const NOT_FUNC_ERROR_TIP = 'pass Function to matchFunction';
 
 const JStringStates = {
     length: 'length'
@@ -83,9 +77,9 @@ class JTypeString extends JType {
         return this;
     }
 
-    equal (compareTarget) {
+    eq (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().equal(compareTarget).isMatch(value.length),
+            new JTypeNumber().eq(compareTarget).isMatch(value.length),
             `${value} length not equal ${compareTarget}`
         ));
         return this;

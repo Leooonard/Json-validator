@@ -60,7 +60,7 @@ class JTypeArray extends JType {
 
     eq (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().equal(compareTarget).isMatch(this._value.length),
+            new JTypeNumber().eq(compareTarget).isMatch(this._value.length),
             `[${value}] not equal ${compareTarget}`
         ));
         return this;

@@ -50,11 +50,11 @@ describe('test JTypeString', () => {
 
         describe('equal', () => {
             test('\'aaa\' length should equal 3', () => {
-                expect(stringType.length.equal(3).isMatch('aaa')).toBeTruthy();
+                expect(stringType.length.eq(3).isMatch('aaa')).toBeTruthy();
             });
 
             test('\'aaaa\' length should not equal 3', () => {
-                expect(stringType.length.equal(3).isMatch('aaaa').message).toBe('aaaa length not equal 3');
+                expect(stringType.length.eq(3).isMatch('aaaa').message).toBe('aaaa length not equal 3');
             });
         });
 
@@ -172,7 +172,7 @@ describe('test JTypeString', () => {
             });
 
             test('\'aaa\' length should equal 3 and gt 1 and gte 2 and lt 5 and lte 3', () => {
-                expect(stringType.equal(3).and.gt(1).and.gte(2).lt(5).and.lte(3).isMatch('aaa')).toBeTruthy();
+                expect(stringType.eq(3).and.gt(1).and.gte(2).lt(5).and.lte(3).isMatch('aaa')).toBeTruthy();
             });
         });
 
@@ -188,7 +188,7 @@ describe('test JTypeString', () => {
 
         describe('multi length and match condition', () => {
             test('\'aaa\' should lt 5 and eq 3 and match regexp /^a+$/', () => {
-                expect(stringType.lt(5).and.equal(3).and.matchRegexp(/^a+$/));
+                expect(stringType.lt(5).and.eq(3).and.matchRegexp(/^a+$/));
             });
 
             test('\'aaa\' should lte 5 and match function that expect string \'aaa\'', () => {

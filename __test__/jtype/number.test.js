@@ -89,24 +89,24 @@ describe('test JTypeNumber\'s basic function', () => {
 
     describe('equal', () => {
         test('5 should equal 5', () => {
-            let numberType = new JTypeNumber().equal(5);
+            let numberType = new JTypeNumber().eq(5);
             expect(numberType.isMatch(5)).toBeTruthy();
         });
 
         test('5 should not equal 0', () => {
-            let numberType = new JTypeNumber().equal(0);
+            let numberType = new JTypeNumber().eq(0);
             expect(numberType.isMatch(5).message).toBe('5 not equal 0');
         });
     });
 
     describe('not equal', () => {
         test('5 should not equal 5', () => {
-            let numberType = new JTypeNumber().notEqual(5);
+            let numberType = new JTypeNumber().neq(5);
             expect(numberType.isMatch(5).message).toBe('5 not notEqual 5');
         });
 
         test('5 should not equal 0', () => {
-            let numberType = new JTypeNumber().notEqual(0);
+            let numberType = new JTypeNumber().neq(0);
             expect(numberType.isMatch(5)).toBeTruthy();
         });
     });

@@ -13,9 +13,9 @@ describe('JTC', () => {
     test('should not match this complex shape object', () => {
         const message = new JTC(JTypes.object).matchShape({
             name: JTC.string.lte(25).and.gte(5),
-            phoneNumber: JTC.string.equal(11),
+            phoneNumber: JTC.string.eq(11),
             age: JTC.number.lte(20).and.gte(12),
-            certificateType: JTC.number.equal(1),
+            certificateType: JTC.number.eq(1),
             noteList: JTC.array.matchChild(JTC.object.matchShape({
                 type: JTC.number.inNumbers([1, 2]),
                 title: JTC.string.unEmpty,
@@ -35,17 +35,19 @@ describe('JTC', () => {
             ], // noteList中必须包含type为1的数据，且对应的数据有非空的title和content字段。
         }).message;
 
+        console.log(message);
+
         expect(message).toMatch(/.+/);
     });
 
     test('should match this complex shape object', () => {
         expect(new JTC(JTypes.object).matchShape({
             name: JTC.string.lte(25).and.gte(5),
-            phoneNumber: JTC.string.equal(11),
+            phoneNumber: JTC.string.eq(11),
             age: JTC.number.lte(20).and.gte(12),
             certificateType: JTC.number.inNumbers([1, 2]),
             noteList: JTC.array.matchChild(JTC.object.matchShape({
-                type: JTC.number.equal(1),
+                type: JTC.number.eq(1),
                 title: JTC.string.unEmpty,
                 content: JTC.string.unEmpty
             })).and.eq(1)

@@ -109,7 +109,7 @@ describe('test JTypeArray', () => {
         describe('matchChild', () => {
             test('should only match child like {type: 1}', () => {
                 expect(arrayType.matchChild(new JTypeObject().matchShape({
-                    type: new JTypeNumber().equal(1)
+                    type: new JTypeNumber().eq(1)
                 })).eq(1).isMatch([
                     {
                         type: 1
