@@ -107,7 +107,7 @@ describe('filter api', () => {
         describe('test JTypeObject\'s basic function', () => {
             describe('should only match object', () => {
                 test('{} is object filter result is {}', () => {
-                    expect(objectType.filter([])).toEqual({});
+                    expect(objectType.filter([])).toEqual([]);
                 });
 
                 test('5 is not arary filter result is undefined', () => {

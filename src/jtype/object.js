@@ -20,6 +20,8 @@ class JTypeObject extends JType {
     constructor(returnControl) {
         super(returnControl);
 
+        this._action = '';
+
         this._$addMatcher(value => wrapResult(
             this._isObject(value),
             `${value} not object`
@@ -32,15 +34,46 @@ class JTypeObject extends JType {
 
     matchShape(shape) {
         this._$addMatcher(value => {
-            let result = this._isMatchShape(value, shape)
-
-            if (isSuccessResult(result)) {
-                return wrapResult(true);
+            console.log(this._action);
+            if (this._action === 'test') {
+                return this._isMatchShape(value, shape);
             } else {
-                return wrapResult(false, getResultMessage(result));
+                return this._filterShape(value, shape);
             }
         });
         return this;
+    }
+
+    _filterShape (value, shape) {
+        const valueKeys = Object.keys(value);
+        const shapeKeys = Object.keys(shape);
+
+        for (let i = 0; i < shapeKeys.length; i++) {
+            let shapeKey = shapeKeys[i];
+            let shapeProperty = shape[shapeKey];
+            let findValueKey = false;
+
+            for (let j = 0; j < valueKeys.length; j++) {
+                let valueKey = valueKeys[j];
+                let valueProperty = value[valueKey];
+
+                if (shapeKey === valueKey) {
+                    findValueKey = true;
+                    const result = shapeProperty.filter(valueProperty);
+                    if (result === undefined) {
+                        return undefined;
+                    } else {
+                        value[valueKey] = result;
+                    }
+                }
+            }
+
+            if (!findValueKey) {
+                return undefined;
+            }
+        }
+
+        return value;
     }
 
     _isMatchShape(value, shape) {
@@ -59,7 +92,6 @@ class JTypeObject extends JType {
                 if (shapeKey === valueKey) {
                     findValueKey = true;
                     const isMatch = shapeProperty.test(valueProperty);
-
                     if (!isSuccessResult(isMatch)) {
                         return wrapResult(false, `attribute ${shapeKey} not match shape , ${getResultMessage(isMatch)}`);
                     } else {
@@ -74,6 +106,16 @@ class JTypeObject extends JType {
         }
 
         return wrapResult(true);
+    }
+
+    test (value) {
+        this._action = 'test';
+        return super.test(value);
+    }
+
+    filter (value) {
+        this._action = 'filter';
+        return super.filter();
     }
 }
 

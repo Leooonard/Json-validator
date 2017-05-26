@@ -47,29 +47,49 @@ class JTypeCollector {
         return this;
     }
 
-    static get bool () {
+    get bool () {
         const boolType = new JTypeBool(this._returnControl, this);
         return this._addTyper(boolType);
     }
 
-    static get number () {
+    static get bool () {
+        return new JTypeCollector().bool;
+    }
+
+    get number () {
         const numberType = new JTypeNumber(this._returnControl, this);
         return this._addTyper(numberType);
     }
 
-    static get string () {
+    static get number () {
+        return new JTypeCollector().number;
+    }
+
+    get string () {
         const stringType = new JTypeString(this._returnControl, this);
         return this._addTyper(stringType);
     }
 
-    static get array () {
+    static get string () {
+        return new JTypeCollector().string;
+    }
+
+    get array () {
         const arrayType = new JTypeArray(this._returnControl, this);
         return this._addTyper(arrayType);
     }
 
-    static get object () {
+    static get array () {
+        return new JTypeCollector().array;
+    }
+
+    get object () {
         const objectType = new JTypeObject(this._returnControl, this);
         return this._addTyper(objectType);
+    }
+
+    static get object () {
+        return new JTypeCollector().object;
     }
 
     test (value) {
@@ -112,6 +132,5 @@ class JTypeCollector {
 }
 
 export {
-    JTypeCollector as JTC,
-    JTypes
+    JTypeCollector as JTC
 };

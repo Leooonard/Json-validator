@@ -8,11 +8,11 @@ import {
 describe('test api', () => {
     describe('JTC', () => {
         test('number type and great than 5 and less than 15', () => {
-            expect(new JTC(JTypes.number).gt(5).and.lt(15).end.test(10)).toBeTruthy();
+            expect(JTC.number.gt(5).and.lt(15).end.test(10)).toBeTruthy();
         });
 
         test('should not match this complex shape object', () => {
-            const message = new JTC(JTypes.object).matchShape({
+            const message = JTC.object.matchShape({
                 name: JTC.string.lte(25).and.gte(5),
                 phoneNumber: JTC.string.eq(11),
                 age: JTC.number.lte(20).and.gte(12),
@@ -42,7 +42,7 @@ describe('test api', () => {
         });
 
         test('should match this complex shape object', () => {
-            expect(new JTC(JTypes.object).matchShape({
+            expect(JTC.object.matchShape({
                 name: JTC.string.lte(25).and.gte(5),
                 phoneNumber: JTC.string.eq(11),
                 age: JTC.number.lte(20).and.gte(12),
@@ -72,11 +72,11 @@ describe('test api', () => {
 describe('filter api', () => {
     describe('JTC', () => {
         test('number type and great than 5 and less than 15 filter result is 10', () => {
-            expect(new JTC(JTypes.number).gt(5).and.lt(15).filter(10)).toBe(10);
+            expect(JTC.number.gt(5).and.lt(15).filter(10)).toBe(10);
         });
 
         test('should not match this complex shape object filter result is undefined', () => {
-            const message = new JTC(JTypes.object).matchShape({
+            const result = JTC.object.matchShape({
                 name: JTC.string.lte(25).and.gte(5),
                 phoneNumber: JTC.string.eq(11),
                 age: JTC.number.lte(20).and.gte(12),
@@ -98,15 +98,13 @@ describe('filter api', () => {
                         content: 'hahaha'
                     },
                 ], // noteList中必须包含type为1的数据，且对应的数据有非空的title和content字段。
-            }).message;
+            });
 
-            console.log(message);
-
-            expect(message).toMatch(/.+/);
+            expect(result).toBe(undefined);
         });
 
         test('should match this complex shape object', () => {
-            expect(new JTC(JTypes.object).matchShape({
+            expect(JTC.object.matchShape({
                 name: JTC.string.lte(25).and.gte(5),
                 phoneNumber: JTC.string.eq(11),
                 age: JTC.number.lte(20).and.gte(12),
@@ -116,7 +114,22 @@ describe('filter api', () => {
                     title: JTC.string.unEmpty,
                     content: JTC.string.unEmpty
                 })).and.eq(1)
-            }).end.test({
+            }).filter({
+                name: 'aa/zz',
+                phoneNumber: '13681622894',
+                age: 15,
+                certificateType: 1,
+                noteList: [
+                    {
+                        type: 1,
+                        title: 'haha',
+                        content: 'hahaha'
+                    },
+                    {
+                        type: 2
+                    }
+                ]
+            })).toEqual({
                 name: 'aa/zz',
                 phoneNumber: '13681622894',
                 age: 15,
@@ -128,7 +141,7 @@ describe('filter api', () => {
                         content: 'hahaha'
                     },
                 ]
-            })).toBeTruthy();
+            });
         });
     });
 });
