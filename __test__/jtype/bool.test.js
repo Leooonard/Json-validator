@@ -4,40 +4,82 @@ import {
     JTypeBool
 } from '../../src/jtype/bool';
 
-describe('test JTypeBool\'s basic function', () => {
-    describe('should only match bool', () => {
-        test('true is bool', () => {
-            let boolType = new JTypeBool();
-            expect(boolType.isMatch(true)).toBeTruthy();
+describe('test api', () => {
+    describe('test JTypeBool\'s basic function', () => {
+        describe('should only match bool', () => {
+            test('true is bool', () => {
+                let boolType = new JTypeBool();
+                expect(boolType.test(true)).toBeTruthy();
+            });
+
+            test('5 is not bool', () => {
+                let boolType = new JTypeBool();
+                expect(boolType.test(5).message).toBe('not boolean type');
+            })
         });
 
-        test('5 is not bool', () => {
-            let boolType = new JTypeBool();
-            expect(boolType.isMatch(5).message).toBe('not boolean type');
-        })
+        describe('true', () => {
+            test('true should equal true', () => {
+                let boolType = new JTypeBool().truely;
+                expect(boolType.test(true)).toBeTruthy();
+            });
+
+            test('false should not equal true', () => {
+                let boolType = new JTypeBool().truely;
+                expect(boolType.test(false).message).toBe('not true value');
+            });
+        });
+
+        describe('false', () => {
+            test('false should equal false', () => {
+                let boolType = new JTypeBool().falsely;
+                expect(boolType.test(false)).toBeTruthy();
+            });
+
+            test('false should not equal true', () => {
+                let boolType = new JTypeBool().falsely;
+                expect(boolType.test(true).message).toBe('not false value');
+            });
+        });
     });
+});
 
-    describe('true', () => {
-        test('true should equal true', () => {
-            let boolType = new JTypeBool().truely;
-            expect(boolType.isMatch(true)).toBeTruthy();
+describe('filter api', () => {
+    describe('test JTypeBool\'s basic function', () => {
+        describe('should only match bool', () => {
+            test('true filter result is true', () => {
+                let boolType = new JTypeBool();
+                expect(boolType.filter(true)).toBe(true);
+            });
+
+            test('5 filter result is undefined', () => {
+                let boolType = new JTypeBool();
+                expect(boolType.filter(5)).toBe(undefined);
+            });
         });
 
-        test('false should not equal true', () => {
-            let boolType = new JTypeBool().truely;
-            expect(boolType.isMatch(false).message).toBe('not true value');
-        });
-    });
+        describe('true', () => {
+            test('true filter result is true', () => {
+                let boolType = new JTypeBool().truely;
+                expect(boolType.filter(true)).toBe(true);
+            });
 
-    describe('false', () => {
-        test('false should equal false', () => {
-            let boolType = new JTypeBool().falsely;
-            expect(boolType.isMatch(false)).toBeTruthy();
+            test('false filter result is undefined', () => {
+                let boolType = new JTypeBool().truely;
+                expect(boolType.filter(false)).toBe(undefined);
+            });
         });
 
-        test('false should not equal true', () => {
-            let boolType = new JTypeBool().falsely;
-            expect(boolType.isMatch(true).message).toBe('not false value');
+        describe('false', () => {
+            test('false filter result is false', () => {
+                let boolType = new JTypeBool().falsely;
+                expect(boolType.filter(false)).toBe(false);
+            });
+
+            test('false filter result is undefined', () => {
+                let boolType = new JTypeBool().falsely;
+                expect(boolType.filter(true)).toBe(undefined);
+            });
         });
     });
 });

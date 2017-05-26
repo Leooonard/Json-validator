@@ -58,7 +58,7 @@ class JTypeObject extends JType {
 
                 if (shapeKey === valueKey) {
                     findValueKey = true;
-                    const isMatch = shapeProperty.isMatch(valueProperty);
+                    const isMatch = shapeProperty.test(valueProperty);
 
                     if (!isSuccessResult(isMatch)) {
                         return wrapResult(false, `attribute ${shapeKey} not match shape , ${getResultMessage(isMatch)}`);

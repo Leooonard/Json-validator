@@ -109,27 +109,6 @@ class JTypeCollector {
 
         return filterResult;
     }
-
-    /*
-        当前只支持使用or连接两个typer，所以只要满足其中任意一个即可。
-    */
-    isMatch (value) {
-        const typers = this._getTypers();
-        let errorMessage = '';
-
-        for (let i = 0 ; i < typers.length ; i++) {
-            let typer = typers[i];
-            let result = typer.isMatch(value);
-
-            if (isSuccessResult(result)) {
-                return wrapResult(true);
-            } else {
-                errorMessage = getResultMessage(result);
-            }
-        }
-
-        return wrapResult(false, errorMessage);
-    }
 }
 
 export {

@@ -16,7 +16,8 @@ import {
 } from '../util/assert';
 
 import {
-    wrapResult
+    wrapResult,
+    isSuccessResult
 } from '../util/result';
 
 /*
@@ -79,7 +80,7 @@ class JTypeString extends JType {
 
     eq (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().eq(compareTarget).isMatch(value.length),
+            isSuccessResult(new JTypeNumber().eq(compareTarget).test(value.length)),
             `${value} length not equal ${compareTarget}`
         ));
         return this;
@@ -87,7 +88,7 @@ class JTypeString extends JType {
 
     gt (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().gt(compareTarget).isMatch(value.length),
+            isSuccessResult(new JTypeNumber().gt(compareTarget).test(value.length)),
             `${value} length not gt ${compareTarget}`
         ));
         return this;
@@ -95,7 +96,7 @@ class JTypeString extends JType {
 
     lt (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().lt(compareTarget).isMatch(value.length),
+            isSuccessResult(new JTypeNumber().lt(compareTarget).test(value.length)),
             `${value} length not lt ${compareTarget}`
         ));
         return this;
@@ -103,7 +104,7 @@ class JTypeString extends JType {
 
     gte (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().gte(compareTarget).isMatch(value.length),
+            isSuccessResult(new JTypeNumber().gte(compareTarget).test(value.length)),
             `${value} length not gte ${compareTarget}`
         ));
         return this;
@@ -111,7 +112,7 @@ class JTypeString extends JType {
 
     lte (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().lte(compareTarget).isMatch(value.length),
+            isSuccessResult(new JTypeNumber().lte(compareTarget).test(value.length)),
             `${value} length not lte ${compareTarget}`
         ));
         return this;

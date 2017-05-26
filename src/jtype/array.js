@@ -52,7 +52,7 @@ class JTypeArray extends JType {
 
     matchChild (jType) {
         this._$addMatcher(value => {
-            this._value = this._value.filter(listItem => isSuccessResult(jType.isMatch(listItem)));
+            this._value = this._value.filter(listItem => isSuccessResult(jType.test(listItem)));
             return true;
         });
         return this;
@@ -60,7 +60,7 @@ class JTypeArray extends JType {
 
     eq (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().eq(compareTarget).isMatch(this._value.length),
+            isSuccessResult(new JTypeNumber().eq(compareTarget).test(this._value.length)),
             `[${value}] not equal ${compareTarget}`
         ));
         return this;
@@ -68,7 +68,7 @@ class JTypeArray extends JType {
 
     gt (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().gt(compareTarget).isMatch(this._value.length),
+            isSuccessResult(new JTypeNumber().gt(compareTarget).test(this._value.length)),
             `[${value}] not gt ${compareTarget}`
         ));
         return this;
@@ -76,7 +76,7 @@ class JTypeArray extends JType {
 
     lt (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().lt(compareTarget).isMatch(this._value.length),
+            isSuccessResult(new JTypeNumber().lt(compareTarget).test(this._value.length)),
             `[${value}] not lt ${compareTarget}`
         ));
         return this;
@@ -84,7 +84,7 @@ class JTypeArray extends JType {
 
     gte (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().gte(compareTarget).isMatch(this._value.length),
+            isSuccessResult(new JTypeNumber().gte(compareTarget).test(this._value.length)),
             `[${value}] not gte ${compareTarget}`
         ));
         return this;
@@ -92,7 +92,7 @@ class JTypeArray extends JType {
 
     lte (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            new JTypeNumber().lte(compareTarget).isMatch(this._value.length),
+            isSuccessResult(new JTypeNumber().lte(compareTarget).test(this._value.length)),
             `[${value}] not lte ${compareTarget}`
         ));
         return this;
