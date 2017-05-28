@@ -1,30 +1,24 @@
 /* @flow */
 
+import {
+    JTC
+} from './jtype/collector';
+
 class Joi {
-    constructor (schema, config) {
-        this._schema = schema;
-        this._config = this._parseConfig(config);
-    }
-
-    _parseConfig (config) {
-        const defaultConfig = {
-            silentError: true,
-            useFilter: false
-        };
-
-        if (typeof config !== 'object' || config === null) {
-            return defaultConfig;
+    constructor (schema) {
+        if (JTC.isJTC(schema)) {
+            this._schema = schema;
+        } else {
+            this._schema = schema.getCollector();
         }
-
-        return Object.assign(defaultConfig, config);
     }
 
     test (target) {
-        return this._schema.isMatch(target);
+        return this._schema.test(target);
     }
 
     filter (target) {
-        return target;
+        return this._schema.filter(target);
     }
 
     static test (target, schema) {
@@ -37,5 +31,6 @@ class Joi {
 };
 
 export {
-    Joi
+    Joi,
+    JTC
 };

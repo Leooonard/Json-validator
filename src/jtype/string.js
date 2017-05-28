@@ -41,8 +41,8 @@ const JStringStates = {
 };
 
 class JTypeString extends JType {
-    constructor (returnControl) {
-        super(returnControl);
+    constructor (returnControl, collector) {
+        super(returnControl, collector);
 
         this._$addMatcher(value => wrapResult(
             this._isString(value),

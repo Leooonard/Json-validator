@@ -25,8 +25,8 @@ import {
 */
 
 class JTypeNumber extends JType {
-    constructor (returnControl) {
-        super(returnControl);
+    constructor (returnControl, collector) {
+        super(returnControl, collector);
 
         this._$addMatcher(value => wrapResult(this._isNumber(value), 'not number type'));
     }

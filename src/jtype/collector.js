@@ -92,6 +92,10 @@ class JTypeCollector {
         return new JTypeCollector().object;
     }
 
+    static isJTC (obj) {
+        return obj instanceof JTypeCollector;
+    }
+
     test (value) {
         const typers = this._getTypers();
         let errorResult = undefined;

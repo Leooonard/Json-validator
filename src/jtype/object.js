@@ -17,15 +17,21 @@ import {
 */
 
 class JTypeObject extends JType {
-    constructor(returnControl) {
-        super(returnControl);
+    constructor(returnControl, collector) {
+        super(returnControl, collector);
 
         this._action = '';
 
-        this._$addMatcher(value => wrapResult(
-            this._isObject(value),
-            `${value} not object`
-        ));
+        this._$addMatcher(value => {
+            if (this._action === 'test') {
+                return wrapResult(
+                    this._isObject(value),
+                    `${value} not object`
+                );
+            } else {
+                return this._isObject(value) ? value : undefined
+            }
+        });
     }
 
     _isObject(value) {
@@ -34,7 +40,6 @@ class JTypeObject extends JType {
 
     matchShape(shape) {
         this._$addMatcher(value => {
-            console.log(this._action);
             if (this._action === 'test') {
                 return this._isMatchShape(value, shape);
             } else {
@@ -110,12 +115,40 @@ class JTypeObject extends JType {
 
     test (value) {
         this._action = 'test';
-        return super.test(value);
+        return this._isMatch(value);
     }
 
     filter (value) {
         this._action = 'filter';
-        return super.filter();
+        return this._isMatch(value);
+    }
+
+    _isMatch (value) {
+        const matchers = this._$getMatchers();
+
+        if (this._action === 'test') {
+            for (let i = 0 ; i < matchers.length ; i++) {
+                let matcher = matchers[i];
+                let result = matcher.func(value);
+
+                if (!isSuccessResult(result)) {
+                    return wrapResult(false, getResultMessage(result));
+                }
+            }
+
+            return wrapResult(true);
+        } else {
+            for (let i = 0 ; i < matchers.length ; i++) {
+                let matcher = matchers[i];
+                let result = matcher.func(value);
+
+                if (result === undefined) {
+                    return undefined;
+                }
+            }
+
+            return value;
+        }
     }
 }
 

@@ -11,8 +11,8 @@ import {
 } from '../util/result';
 
 class JTypeBool extends JType {
-    constructor (returnControl) {
-        super(returnControl);
+    constructor (returnControl, collector) {
+        super(returnControl, collector);
 
         this._$addMatcher(value => wrapResult(this._isBool(value), 'not boolean type'));
     }

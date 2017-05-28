@@ -26,8 +26,8 @@ import {
 */
 
 class JTypeArray extends JType {
-    constructor (returnControl) {
-        super(returnControl);
+    constructor (returnControl, collector) {
+        super(returnControl, collector);
 
         this._$addMatcher(value => {
             this._value = value;
@@ -52,7 +52,11 @@ class JTypeArray extends JType {
 
     matchChild (jType) {
         this._$addMatcher(value => {
-            this._value = this._value.filter(listItem => isSuccessResult(jType.test(listItem)));
+            if (this._action === 'test') {
+                this._value = this._value.filter(listItem => isSuccessResult(jType.test(listItem)));
+            } else {
+                this._value = this._value.filter(listItem => jType.filter(listItem) !== undefined);
+            }
             return true;
         });
         return this;
@@ -98,7 +102,13 @@ class JTypeArray extends JType {
         return this;
     }
 
+    test (value) {
+        this._action = 'test';
+        return super.test(value);
+    }
+
     filter (value) {
+        this._action = 'filter';
         if (isSuccessResult(this._isMatch(value))) {
             return this._value;
         } else {
