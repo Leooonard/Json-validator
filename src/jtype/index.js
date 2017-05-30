@@ -46,50 +46,21 @@ const JStates = {
 };
 
 class JType {
-    constructor (returnControl, collector) {
+    constructor (collector) {
         this._matchers = [];
-        this._states = [];
-        this._returnControl = returnControl;
         this._collector = collector;
+        this.getCollector = this.getCollector.bind(this);
 
         mixinCoujunction(this);
-        mixinOr(this, this._returnControl);
+        mixinOr(this, this.getCollector);
+    }
+
+    static isJType (obj) {
+        return obj instanceof JType;
     }
 
     getCollector () {
         return this._collector;
-    }
-
-    // functional conjunction start
-    // get or () {
-    //     return this._returnControl();
-    // }
-
-    // get not () {
-    //     this._$pushState();
-    //     return this;
-    // }
-
-    get end () {
-        return this._returnControl();
-    }
-    // functional conjunction end
-
-    _$pushState (state) {
-        this._states.push(state);
-    }
-
-    _$popState () {
-        return this._states.pop();
-    }
-
-    _$getCurrentState () {
-        const lastIndex = this._states.length - 1;
-        return this._states[lastIndex];
-    }
-
-    _$getStates () {
-        return this._states;
     }
 
     _$addMatcher (func) {
@@ -102,20 +73,7 @@ class JType {
         return this._matchers;
     }
 
-    test (value) {
-        return this._isMatch(value);
-    }
-
-    filter (value) {
-        let result = this._isMatch(value);
-        if (isSuccessResult(result)) {
-            return value;
-        } else {
-            return undefined;
-        }
-    }
-
-    _isMatch (value) {
+    validate (value) {
         const matchers = this._$getMatchers();
 
         for (let i = 0 ; i < matchers.length ; i++) {
@@ -123,11 +81,11 @@ class JType {
             let result = matcher.func(value);
 
             if (!isSuccessResult(result)) {
-                return wrapResult(false, getResultMessage(result));
+                return result;
             }
         }
 
-        return wrapResult(true);
+        return wrapResult(true, value);
     }
 }
 

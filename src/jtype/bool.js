@@ -1,7 +1,5 @@
 // @flow
 
-'use strict';
-
 import {
     JType
 } from './index';
@@ -11,10 +9,10 @@ import {
 } from '../util/result';
 
 class JTypeBool extends JType {
-    constructor (returnControl, collector) {
-        super(returnControl, collector);
+    constructor (collector) {
+        super(collector);
 
-        this._$addMatcher(value => wrapResult(this._isBool(value), 'not boolean type'));
+        this._$addMatcher(value => wrapResult(this._isBool(value), value, 'not boolean type'));
     }
 
     _isBool (value) {
@@ -22,12 +20,12 @@ class JTypeBool extends JType {
     }
 
     get truely () {
-        this._$addMatcher(value => wrapResult(value === true, 'not true value'));
+        this._$addMatcher(value => wrapResult(value === true, value, 'not true value'));
         return this;
     }
 
     get falsely () {
-        this._$addMatcher(value => wrapResult(value === false, 'not false value'));
+        this._$addMatcher(value => wrapResult(value === false, value, 'not false value'));
         return this;
     }
 }

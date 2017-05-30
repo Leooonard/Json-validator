@@ -48,7 +48,7 @@ class JTypeCollector {
     }
 
     get bool () {
-        const boolType = new JTypeBool(this._returnControl, this);
+        const boolType = new JTypeBool(this);
         return this._addTyper(boolType);
     }
 
@@ -57,7 +57,7 @@ class JTypeCollector {
     }
 
     get number () {
-        const numberType = new JTypeNumber(this._returnControl, this);
+        const numberType = new JTypeNumber(this);
         return this._addTyper(numberType);
     }
 
@@ -66,7 +66,7 @@ class JTypeCollector {
     }
 
     get string () {
-        const stringType = new JTypeString(this._returnControl, this);
+        const stringType = new JTypeString(this);
         return this._addTyper(stringType);
     }
 
@@ -75,7 +75,7 @@ class JTypeCollector {
     }
 
     get array () {
-        const arrayType = new JTypeArray(this._returnControl, this);
+        const arrayType = new JTypeArray(this);
         return this._addTyper(arrayType);
     }
 
@@ -84,7 +84,7 @@ class JTypeCollector {
     }
 
     get object () {
-        const objectType = new JTypeObject(this._returnControl, this);
+        const objectType = new JTypeObject(this);
         return this._addTyper(objectType);
     }
 
@@ -96,42 +96,27 @@ class JTypeCollector {
         return obj instanceof JTypeCollector;
     }
 
-    test (value) {
+    validate (value) {
         const typers = this._getTypers();
         let errorResult = undefined;
+        let successResult = undefined;
 
         let result = typers.some(typer => {
-            let result = typer.test(value);
+            let result = typer.validate(value);
             if (!isSuccessResult(result)) {
                 errorResult = result;
                 return false;
             } else {
+                successResult = result;
                 return true;
             }
         });
 
         if (result) {
-            return wrapResult(true);
+            return successResult;
         } else {
             return errorResult;
         }
-    }
-
-    filter (value) {
-        const typers = this._getTypers();
-        let filterResult = undefined;
-
-        typers.some(typer => {
-            let result = typer.filter(value);
-            if (result !== undefined) {
-                filterResult = result;
-                return true;
-            } else {
-                return false;
-            }
-        });
-
-        return filterResult;
     }
 }
 

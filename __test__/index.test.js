@@ -5,9 +5,13 @@ import {
     Joi
 } from '../src';
 
+import {
+    getResultValue
+} from '../src/util/result';
+
 describe('Joi', () => {
     test('a real example', () => {
-        expect(Joi.filter({
+        let result = Joi.validate({
             packageType: 1,
             packageShortName: '休息室',
             packageRemark: '5折优惠',
@@ -117,19 +121,10 @@ describe('Joi', () => {
                 type: JTC.number.inNumbers([1]),
                 title: JTC.string.unEmpty,
                 content: JTC.string.unEmpty
-            })).and.length.gt(0),
-            a: JTC.object.matchShape({
-                packageType: JTC.number.inNumbers([10]),
-                passengerList: JTC.array.matchChild(JTC.object.matchShape({
-                    passengerType: JTC.number.inNumbers([0, 1, 2, 3])
-                })).and.length.gt(0)
-            }).or.object.matchShape({
-                packageType: JTC.number.inNumbers([9]),
-                passengerList: JTC.array.matchChild(JTC.object.matchShape({
-                    passengerType: JTC.number.inNumbers([1, 2, 3])
-                })).and.length.gt(0)
-            })
-        }))).toEqual({
+            })).and.length.gt(0)
+        }));
+
+        expect(getResultValue(result)).toEqual({
             packageType: 1,
             packageShortName: '休息室',
             packageRemark: '5折优惠',

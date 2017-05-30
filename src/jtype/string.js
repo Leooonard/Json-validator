@@ -33,19 +33,13 @@ import {
     matchFunction
 */
 
-const EMPTY_STATE = -1;
-const LENGTH_STATE = 1;
-
-const JStringStates = {
-    length: 'length'
-};
-
 class JTypeString extends JType {
-    constructor (returnControl, collector) {
-        super(returnControl, collector);
+    constructor (collector) {
+        super(collector);
 
         this._$addMatcher(value => wrapResult(
             this._isString(value),
+            value,
             `${value} not string`
         ));
     }
@@ -57,6 +51,7 @@ class JTypeString extends JType {
     get empty () {
         this._$addMatcher(value => wrapResult(
             this._isEmptyString(value),
+            value,
             `${value} not empty`
         ));
         return this;
@@ -65,6 +60,7 @@ class JTypeString extends JType {
     get unEmpty () {
         this._$addMatcher(value => wrapResult(
             !this._isEmptyString(value),
+            value,
             `${value} not unEmpty`
         ));
         return this;
@@ -80,7 +76,8 @@ class JTypeString extends JType {
 
     eq (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().eq(compareTarget).test(value.length)),
+            isSuccessResult(new JTypeNumber().eq(compareTarget).validate(value.length)),
+            value,
             `${value} length not equal ${compareTarget}`
         ));
         return this;
@@ -88,7 +85,8 @@ class JTypeString extends JType {
 
     gt (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().gt(compareTarget).test(value.length)),
+            isSuccessResult(new JTypeNumber().gt(compareTarget).validate(value.length)),
+            value,
             `${value} length not gt ${compareTarget}`
         ));
         return this;
@@ -96,7 +94,8 @@ class JTypeString extends JType {
 
     lt (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().lt(compareTarget).test(value.length)),
+            isSuccessResult(new JTypeNumber().lt(compareTarget).validate(value.length)),
+            value,
             `${value} length not lt ${compareTarget}`
         ));
         return this;
@@ -104,7 +103,8 @@ class JTypeString extends JType {
 
     gte (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().gte(compareTarget).test(value.length)),
+            isSuccessResult(new JTypeNumber().gte(compareTarget).validate(value.length)),
+            value,
             `${value} length not gte ${compareTarget}`
         ));
         return this;
@@ -112,7 +112,8 @@ class JTypeString extends JType {
 
     lte (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().lte(compareTarget).test(value.length)),
+            isSuccessResult(new JTypeNumber().lte(compareTarget).validate(value.length)),
+            value,
             `${value} length not lte ${compareTarget}`
         ));
         return this;
@@ -121,6 +122,7 @@ class JTypeString extends JType {
     includes (subString) {
         this._$addMatcher(value => wrapResult(
             value.includes(subString),
+            value,
             `${value} not includes ${subString}`
         ));
         return this;
@@ -129,6 +131,7 @@ class JTypeString extends JType {
     startsWith (subString) {
         this._$addMatcher(value => wrapResult(
             value.startsWith(subString),
+            value,
             `${value} not startsWith ${subString}`
         ));
         return this;
@@ -137,6 +140,7 @@ class JTypeString extends JType {
     endsWith (subString) {
         this._$addMatcher(value => wrapResult(
             value.endsWith(subString),
+            value,
             `${value} not endsWith ${subString}`
         ));
         return this;
@@ -147,6 +151,7 @@ class JTypeString extends JType {
 
         this._$addMatcher(value => wrapResult(
             regexp.test(value),
+            value,
             `${value} not match ${regexp.source}`
         ));
         return this;
@@ -161,6 +166,7 @@ class JTypeString extends JType {
 
         this._$addMatcher(value => wrapResult(
             func(value),
+            value,
             `${value} not match function`
         ));
         return this;

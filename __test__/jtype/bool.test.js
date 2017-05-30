@@ -4,81 +4,56 @@ import {
     JTypeBool
 } from '../../src/jtype/bool';
 
-describe('test api', () => {
-    describe('test JTypeBool\'s basic function', () => {
-        describe('should only match bool', () => {
-            test('true is bool', () => {
-                let boolType = new JTypeBool();
-                expect(boolType.test(true)).toBeTruthy();
-            });
+import {
+    isSuccessResult,
+    getResultMessage,
+    getResultValue
+} from '../../src/util/result';
 
-            test('5 is not bool', () => {
-                let boolType = new JTypeBool();
-                expect(boolType.test(5).message).toBe('not boolean type');
-            })
-        });
-
-        describe('true', () => {
-            test('true should equal true', () => {
-                let boolType = new JTypeBool().truely;
-                expect(boolType.test(true)).toBeTruthy();
-            });
-
-            test('false should not equal true', () => {
-                let boolType = new JTypeBool().truely;
-                expect(boolType.test(false).message).toBe('not true value');
-            });
-        });
-
-        describe('false', () => {
-            test('false should equal false', () => {
-                let boolType = new JTypeBool().falsely;
-                expect(boolType.test(false)).toBeTruthy();
-            });
-
-            test('false should not equal true', () => {
-                let boolType = new JTypeBool().falsely;
-                expect(boolType.test(true).message).toBe('not false value');
-            });
-        });
-    });
-});
-
-describe('filter api', () => {
+describe('validate api', () => {
     describe('test JTypeBool\'s basic function', () => {
         describe('should only match bool', () => {
             test('true filter result is true', () => {
                 let boolType = new JTypeBool();
-                expect(boolType.filter(true)).toBe(true);
+                expect(isSuccessResult(boolType.validate(true))).toBeTruthy();
+                expect(getResultValue(boolType.validate(true))).toBe(true);
             });
 
             test('5 filter result is undefined', () => {
                 let boolType = new JTypeBool();
-                expect(boolType.filter(5)).toBe(undefined);
+                expect(isSuccessResult(boolType.validate(5))).toBeFalsy();
+                expect(getResultValue(boolType.validate(5))).toBe(undefined);
+                console.log(getResultMessage(boolType.validate(5)));
             });
         });
 
         describe('true', () => {
             test('true filter result is true', () => {
                 let boolType = new JTypeBool().truely;
-                expect(boolType.filter(true)).toBe(true);
+                expect(isSuccessResult(boolType.validate(true))).toBeTruthy();
+                expect(getResultValue(boolType.validate(true))).toBe(true);
             });
 
             test('false filter result is undefined', () => {
                 let boolType = new JTypeBool().truely;
-                expect(boolType.filter(false)).toBe(undefined);
+                expect(isSuccessResult(boolType.validate(false))).toBeFalsy();
+                expect(getResultValue(boolType.validate(false))).toBe(undefined);
+                console.log(getResultMessage(boolType.validate(false)));
             });
         });
 
         describe('false', () => {
             test('false filter result is false', () => {
                 let boolType = new JTypeBool().falsely;
-                expect(boolType.filter(false)).toBe(false);
+                expect(isSuccessResult(boolType.validate(false))).toBeTruthy();
+                expect(getResultValue(boolType.validate(false))).toBe(false);
             });
 
-            test('false filter result is undefined', () => {
+            test('false .validate( result is undefined', () => {
                 let boolType = new JTypeBool().falsely;
-                expect(boolType.filter(true)).toBe(undefined);
+                expect(isSuccessResult(boolType.validate(true))).toBeFalsy();
+                expect(getResultValue(boolType.validate(true))).toBe(undefined);
+                console.log(getResultMessage(boolType.validate(true)));
             });
         });
     });

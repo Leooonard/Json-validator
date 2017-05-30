@@ -9,28 +9,28 @@ import {
 import {
     wrapResult,
     isSuccessResult,
+    getResultValue,
     getResultMessage
 } from '../util/result';
+
+import {
+    assert
+} from '../util/assert';
 
 /*
     matchShape
 */
 
 class JTypeObject extends JType {
-    constructor(returnControl, collector) {
-        super(returnControl, collector);
-
-        this._action = '';
+    constructor(collector) {
+        super(collector);
 
         this._$addMatcher(value => {
-            if (this._action === 'test') {
-                return wrapResult(
-                    this._isObject(value),
-                    `${value} not object`
-                );
-            } else {
-                return this._isObject(value) ? value : undefined
-            }
+            return wrapResult(
+                this._isObject(value),
+                value,
+                `${value} not object`
+            );
         });
     }
 
@@ -39,17 +39,13 @@ class JTypeObject extends JType {
     }
 
     matchShape(shape) {
-        this._$addMatcher(value => {
-            if (this._action === 'test') {
-                return this._isMatchShape(value, shape);
-            } else {
-                return this._filterShape(value, shape);
-            }
-        });
+        assert(typeof shape === 'object' && shape !== null, 'matchShape only accept object shape');
+
+        this._$addMatcher(value => this._validateShape(value, shape));
         return this;
     }
 
-    _filterShape (value, shape) {
+    _validateShape (value, shape) {
         const valueKeys = Object.keys(value);
         const shapeKeys = Object.keys(shape);
 
@@ -58,37 +54,9 @@ class JTypeObject extends JType {
             let shapeProperty = shape[shapeKey];
             let findValueKey = false;
 
-            for (let j = 0; j < valueKeys.length; j++) {
-                let valueKey = valueKeys[j];
-                let valueProperty = value[valueKey];
-
-                if (shapeKey === valueKey) {
-                    findValueKey = true;
-                    const result = shapeProperty.filter(valueProperty);
-                    if (result === undefined) {
-                        return undefined;
-                    } else {
-                        value[valueKey] = result;
-                    }
-                }
+            if (!JType.isJType(shapeProperty)) {
+                continue;
             }
-
-            if (!findValueKey) {
-                return undefined;
-            }
-        }
-
-        return value;
-    }
-
-    _isMatchShape(value, shape) {
-        const valueKeys = Object.keys(value);
-        const shapeKeys = Object.keys(shape);
-
-        for (let i = 0; i < shapeKeys.length; i++) {
-            let shapeKey = shapeKeys[i];
-            let shapeProperty = shape[shapeKey];
-            let findValueKey = false;
 
             for (let j = 0; j < valueKeys.length; j++) {
                 let valueKey = valueKeys[j];
@@ -96,59 +64,21 @@ class JTypeObject extends JType {
 
                 if (shapeKey === valueKey) {
                     findValueKey = true;
-                    const isMatch = shapeProperty.test(valueProperty);
-                    if (!isSuccessResult(isMatch)) {
-                        return wrapResult(false, `attribute ${shapeKey} not match shape , ${getResultMessage(isMatch)}`);
+                    const result = shapeProperty.validate(valueProperty);
+                    if (!isSuccessResult(result)) {
+                        return wrapResult(false, undefined, `${shapeKey}: ${getResultMessage(result)}`);
                     } else {
-                        continue;
+                        value[valueKey] = getResultValue(result);
                     }
                 }
             }
 
             if (!findValueKey) {
-                return wrapResult(false, 'not find ${shapeKey} in value');
+                return wrapResult(false, undefined, `attribute: ${shapeKey} not found`);
             }
         }
 
-        return wrapResult(true);
-    }
-
-    test (value) {
-        this._action = 'test';
-        return this._isMatch(value);
-    }
-
-    filter (value) {
-        this._action = 'filter';
-        return this._isMatch(value);
-    }
-
-    _isMatch (value) {
-        const matchers = this._$getMatchers();
-
-        if (this._action === 'test') {
-            for (let i = 0 ; i < matchers.length ; i++) {
-                let matcher = matchers[i];
-                let result = matcher.func(value);
-
-                if (!isSuccessResult(result)) {
-                    return wrapResult(false, getResultMessage(result));
-                }
-            }
-
-            return wrapResult(true);
-        } else {
-            for (let i = 0 ; i < matchers.length ; i++) {
-                let matcher = matchers[i];
-                let result = matcher.func(value);
-
-                if (result === undefined) {
-                    return undefined;
-                }
-            }
-
-            return value;
-        }
+        return wrapResult(true, value);
     }
 }
 

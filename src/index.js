@@ -13,20 +13,12 @@ class Joi {
         }
     }
 
-    test (target) {
-        return this._schema.test(target);
+    validate (target) {
+        return this._schema.validate(target);
     }
 
-    filter (target) {
-        return this._schema.filter(target);
-    }
-
-    static test (target, schema) {
-        return new Joi(schema).test(target);
-    }
-
-    static filter (target, schema) {
-        return new Joi(schema).filter(target);
+    static validate (target, schema) {
+        return new Joi(schema).validate(target);
     }
 };
 

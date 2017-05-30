@@ -1,7 +1,5 @@
 // @flow
 
-'use strict';
-
 import {
     JType
 } from './index';
@@ -9,6 +7,10 @@ import {
 import {
     JTypeNumber
 } from './number';
+
+import {
+    assert
+} from '../util/assert';
 
 import {
     wrapResult,
@@ -26,13 +28,14 @@ import {
 */
 
 class JTypeArray extends JType {
-    constructor (returnControl, collector) {
-        super(returnControl, collector);
+    constructor (collector) {
+        super(collector);
 
         this._$addMatcher(value => {
             this._value = value;
             return wrapResult(
                 this._isArray(value),
+                this._value,
                 `${value} not array`
             );
         });
@@ -46,74 +49,77 @@ class JTypeArray extends JType {
         return this;
     }
 
-    getValue () {
-        return this._value;
-    }
-
     matchChild (jType) {
+        assert(JType.isJType(jType), 'matchChild only accpet a JType instance');
+
         this._$addMatcher(value => {
-            if (this._action === 'test') {
-                this._value = this._value.filter(listItem => isSuccessResult(jType.test(listItem)));
-            } else {
-                this._value = this._value.filter(listItem => jType.filter(listItem) !== undefined);
-            }
-            return true;
+            this._value = this._value.filter(listItem => {
+                let result = jType.validate(listItem);
+                return isSuccessResult(result);
+            });
+            return wrapResult(true, this._value);
         });
         return this;
     }
 
     eq (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().eq(compareTarget).test(this._value.length)),
-            `[${value}] not equal ${compareTarget}`
+            isSuccessResult(new JTypeNumber().eq(compareTarget).validate(this._value.length)),
+            this._value,
+            `[${value}]\'s length not equal ${compareTarget}`
         ));
         return this;
     }
 
     gt (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().gt(compareTarget).test(this._value.length)),
-            `[${value}] not gt ${compareTarget}`
+            isSuccessResult(new JTypeNumber().gt(compareTarget).validate(this._value.length)),
+            this._value,
+            `[${value}]\'s length not greater than ${compareTarget}`
         ));
         return this;
     }
 
     lt (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().lt(compareTarget).test(this._value.length)),
-            `[${value}] not lt ${compareTarget}`
+            isSuccessResult(new JTypeNumber().lt(compareTarget).validate(this._value.length)),
+            this._value,
+            `[${value}]\'s length not less than ${compareTarget}`
         ));
         return this;
     }
 
     gte (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().gte(compareTarget).test(this._value.length)),
-            `[${value}] not gte ${compareTarget}`
+            isSuccessResult(new JTypeNumber().gte(compareTarget).validate(this._value.length)),
+            this._value,
+            `[${value}]\'s length not greater than or equal ${compareTarget}`
         ));
         return this;
     }
 
     lte (compareTarget) {
         this._$addMatcher(value => wrapResult(
-            isSuccessResult(new JTypeNumber().lte(compareTarget).test(this._value.length)),
-            `[${value}] not lte ${compareTarget}`
+            isSuccessResult(new JTypeNumber().lte(compareTarget).validate(this._value.length)),
+            this._value,
+            `[${value}]\'s length not less than or equal ${compareTarget}`
         ));
         return this;
     }
 
-    test (value) {
-        this._action = 'test';
-        return super.test(value);
-    }
+    validate (value) {
+        const matchers = this._$getMatchers();
 
-    filter (value) {
-        this._action = 'filter';
-        if (isSuccessResult(this._isMatch(value))) {
-            return this._value;
-        } else {
-            return undefined;
+        for (let i = 0 ; i < matchers.length ; i++) {
+            let matcher = matchers[i];
+            let result = matcher.func(value);
+
+            if (!isSuccessResult(result)) {
+                return result;
+            }
         }
+
+        return wrapResult(true, this._value);
     }
 }
 
