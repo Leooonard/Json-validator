@@ -1,9 +1,9 @@
 // @flow
 
 import {
-    JTC,
-    JTypes
-} from '../../src/jtype/collector';
+    Joi,
+    JTC
+} from '../../src/';
 
 import {
     isSuccessResult,
@@ -17,6 +17,10 @@ describe('validate api', () => {
             expect(isSuccessResult(JTC.number.gt(5).and.lt(15).validate(10))).toBeTruthy();
             expect(getResultValue(JTC.number.gt(5).and.lt(15).validate(10))).toBe(10);
         });
+
+        test('conjunction or should take multi validator in one collector', () => {
+            expect(isSuccessResult(Joi.validate(10, JTC.number.gt(5).or.string.gt(5)))).toBeTruthy();
+        })
 
         test('should not match this complex shape object', () => {
             const result = JTC.object.matchShape({

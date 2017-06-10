@@ -7,6 +7,10 @@ import {
 } from './index';
 
 import {
+    JTC
+} from './collector';
+
+import {
     wrapResult,
     isSuccessResult,
     getResultValue,
@@ -54,8 +58,16 @@ class JTypeObject extends JType {
             let shapeProperty = shape[shapeKey];
             let findValueKey = false;
 
-            if (!JType.isJType(shapeProperty)) {
-                continue;
+            if (!JTC.isJTC(shapeProperty)) {
+                try {
+                    shapeProperty = shapeProperty.getCollector();
+                } catch (e) {
+                    continue;
+                }
+
+                if (!JTC.isJTC(shapeProperty)) {
+                    continue;
+                }
             }
 
             for (let j = 0; j < valueKeys.length; j++) {

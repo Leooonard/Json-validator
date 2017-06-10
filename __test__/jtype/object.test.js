@@ -21,6 +21,10 @@ import {
 } from '../../src/jtype/string';
 
 import {
+    JTC
+} from '../../src/jtype/collector';
+
+import {
     isSuccessResult,
     getResultValue,
     getResultMessage
@@ -56,36 +60,32 @@ describe('validate api', () => {
 
             describe('matchShape', () => {
                 test('{a: 1} should have a attribute a that value is a number filter result is {a: 1}', () => {
-                    let numberType = new JTypeNumber();
                     expect(isSuccessResult(objectType.matchShape({
-                        a: numberType.gt(0)
+                        a: JTC.number.gt(0)
                     }).validate({a: 1}))).toBeTruthy();
                     expect(getResultValue(objectType.matchShape({
-                        a: numberType.gt(0)
+                        a: JTC.number.gt(0)
                     }).validate({a: 1}))).toEqual({a: 1});
                 });
 
                 test('{a: true} should have a attribute a that value is a boolean filter result is {a: true}', () => {
-                    let boolType = new JTypeBool();
                     expect(isSuccessResult(objectType.matchShape({
-                        a: boolType.truely
+                        a: JTC.bool.truely
                     }).validate({a: true}))).toBeTruthy();
                     expect(getResultValue(objectType.matchShape({
-                        a: boolType.truely
+                        a: JTC.bool.truely
                     }).validate({a: true}))).toEqual({a: true});
                 });
 
                 test('{a: \'aaaa\'} should not have a attribute a that value is match regexp /^a+b$/ filter result is undefined', () => {
-                    let stringType = new JTypeString();
-
                     expect(isSuccessResult(objectType.matchShape({
-                        a: stringType.matchRegexp(/^a+b$/)
+                        a: JTC.string.matchRegexp(/^a+b$/)
                     }).validate({a: 'aaaa'}))).toBeFalsy();
                     expect(getResultValue(objectType.matchShape({
-                        a: stringType.matchRegexp(/^a+b$/)
+                        a: JTC.string.matchRegexp(/^a+b$/)
                     }).validate({a: 'aaaa'}))).toBe(undefined);
                     console.log(getResultMessage(objectType.matchShape({
-                        a: stringType.matchRegexp(/^a+b$/)
+                        a: JTC.string.matchRegexp(/^a+b$/)
                     }).validate({a: 'aaaa'})));
                 });
             });
@@ -97,31 +97,31 @@ describe('validate api', () => {
                     and have attribute b that is an array and have attribute c that is an object
                     which have attribute d filter result is {a: 1, b: [1, 2], c: {d: true}}`, () => {
                     expect(isSuccessResult(objectType.matchShape({
-                        a: new JTypeNumber().gt(0),
-                        b: new JTypeArray().eq(2),
-                        c: new JTypeObject().matchShape({
-                            d: new JTypeBool().truely
+                        a: JTC.number.gt(0),
+                        b: JTC.array.eq(2),
+                        c: JTC.object.matchShape({
+                            d: JTC.bool.truely
                         })
                     }).validate({a: 1, b: [1, 2], c: {d: true}}))).toBeTruthy();
                     expect(getResultValue(objectType.matchShape({
-                        a: new JTypeNumber().gt(0),
-                        b: new JTypeArray().eq(2),
-                        c: new JTypeObject().matchShape({
-                            d: new JTypeBool().truely
+                        a: JTC.number.gt(0),
+                        b: JTC.array.eq(2),
+                        c: JTC.object.matchShape({
+                            d: JTC.bool.truely
                         })
                     }).validate({a: 1, b: [1, 2], c: {d: true}}))).toEqual({a: 1, b: [1, 2], c: {d: true}});
                 });
 
                 test(`shape like {a: number.positive} should match object {a: 1, b: false, c: -1} filter result is {a: 1, b: false, c: -1}`, () => {
                     expect(isSuccessResult(objectType.matchShape({
-                        a: new JTypeNumber().positive
+                        a: JTC.number.positive
                     }).validate({
                         a: 1,
                         b: false,
                         c: -1
                     }))).toBeTruthy();
                     expect(getResultValue(objectType.matchShape({
-                        a: new JTypeNumber().positive
+                        a: JTC.number.positive
                     }).validate({
                         a: 1,
                         b: false,
@@ -131,7 +131,35 @@ describe('validate api', () => {
                         b: false,
                         c: -1
                     });
-                })
+                });
+
+                test('use conjunction or in matchShape schema', () => {
+                    expect(isSuccessResult(objectType.matchShape({
+                        a: JTC.number.gt(3).or.string.gt(3)
+                    }).validate({
+                        a: 5
+                    }))).toBeTruthy();
+                    expect(getResultValue(objectType.matchShape({
+                        a: JTC.number.gt(3).or.string.gt(3)
+                    }).validate({
+                        a: 5
+                    }))).toEqual({
+                        a: 5
+                    });
+
+                    expect(isSuccessResult(objectType.matchShape({
+                        a: JTC.number.gt(3).or.string.gt(3)
+                    }).validate({
+                        a: 'aaaaa'
+                    }))).toBeTruthy();
+                    expect(getResultValue(objectType.matchShape({
+                        a: JTC.number.gt(3).or.string.gt(3)
+                    }).validate({
+                        a: 'aaaaa'
+                    }))).toEqual({
+                        a: 'aaaaa'
+                    });
+                });
             });
         });
     });

@@ -5,6 +5,10 @@ import {
 } from './index';
 
 import {
+    JTC
+} from './collector';
+
+import {
     JTypeNumber
 } from './number';
 
@@ -49,12 +53,20 @@ class JTypeArray extends JType {
         return this;
     }
 
-    matchChild (jType) {
-        assert(JType.isJType(jType), 'matchChild only accpet a JType instance');
+    matchChild (jCollector) {
+        try {
+            if (!JTC.isJTC(jCollector)) {
+                jCollector = jCollector.getCollector();
+            }
+        } catch (e) {
+            throw new Error('matchChild only accpet a JTypeCollector instance');
+        }
+
+        assert('matchChild only accpet a JTypeCollector instance', JTC.isJTC(jCollector));
 
         this._$addMatcher(value => {
             this._value = this._value.filter(listItem => {
-                let result = jType.validate(listItem);
+                let result = jCollector.validate(listItem);
                 return isSuccessResult(result);
             });
             return wrapResult(true, this._value);

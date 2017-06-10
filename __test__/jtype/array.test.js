@@ -17,6 +17,10 @@ import {
 } from '../../src/jtype/object';
 
 import {
+    JTC
+} from '../../src/jtype/collector';
+
+import {
     isSuccessResult,
     getResultValue,
     getResultMessage
@@ -121,15 +125,21 @@ describe('validate api', () => {
 
             describe('matchChild', () => {
                 test('[1, 2, 3] should match rules that expect positive number filter result is [1, 2, 3]', () => {
-                    let numberType = new JTypeNumber();
-                    expect(isSuccessResult(arrayType.matchChild(numberType.positive).eq(3).validate([1, 2, 3]))).toBeTruthy();
-                    expect(getResultValue(arrayType.matchChild(numberType.positive).eq(3).validate([1, 2, 3]))).toEqual([1, 2, 3]);
+                    expect(isSuccessResult(arrayType.matchChild(JTC.number.positive).eq(3).validate([1, 2, 3]))).toBeTruthy();
+                    expect(getResultValue(arrayType.matchChild(JTC.number.positive).eq(3).validate([1, 2, 3]))).toEqual([1, 2, 3]);
                 });
 
                 test('[\'a\', \'aa\', \'aaa\'] should match rules that expect specific string filter result [\'a\', \'aa\', \'aaa\']', () => {
-                    let stringType = new JTypeString();
-                    expect(isSuccessResult(arrayType.matchChild(stringType.matchRegexp(/^a+$/)).eq(3).validate(['a', 'aa', 'aaa']))).toBeTruthy();
-                    expect(getResultValue(arrayType.matchChild(stringType.matchRegexp(/^a+$/)).eq(3).validate(['a', 'aa', 'aaa']))).toEqual(['a', 'aa', 'aaa']);
+                    expect(isSuccessResult(arrayType.matchChild(JTC.string.matchRegexp(/^a+$/)).eq(3).validate(['a', 'aa', 'aaa']))).toBeTruthy();
+                    expect(getResultValue(arrayType.matchChild(JTC.string.matchRegexp(/^a+$/)).eq(3).validate(['a', 'aa', 'aaa']))).toEqual(['a', 'aa', 'aaa']);
+                });
+
+                test('use conjunction or in matchChild schema', () => {
+                    expect(isSuccessResult(arrayType.matchChild(JTC.string.gt(3).or.number.lt(5)).validate(['aaaa']))).toBeTruthy();
+                    expect(getResultValue(arrayType.matchChild(JTC.string.gt(3).or.number.lt(5)).validate(['aaaa']))).toEqual(['aaaa']);
+
+                    expect(isSuccessResult(arrayType.matchChild(JTC.string.gt(3).or.number.lt(5)).validate([3]))).toBeTruthy();
+                    expect(getResultValue(arrayType.matchChild(JTC.string.gt(3).or.number.lt(5)).validate([3]))).toEqual([3]);
                 });
             });
         });
@@ -137,8 +147,8 @@ describe('validate api', () => {
         describe('test JTypeArray\'s advanced function', () => {
             describe('matchChild', () => {
                 test('should only match child like {type: 1} filter result is [{type: 1}]', () => {
-                    let result = getResultValue(arrayType.matchChild(new JTypeObject().matchShape({
-                        type: new JTypeNumber().eq(1)
+                    let result = getResultValue(arrayType.matchChild(JTC.object.matchShape({
+                        type: JTC.number.eq(1)
                     })).eq(1).validate([
                         {
                             type: 1
