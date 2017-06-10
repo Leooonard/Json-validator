@@ -64,7 +64,7 @@ console.log(validateResult.successful); // true
 `JTC.array`。返回一个校验array型数据的校验器，返回校验类型集合类。
 
 ### static get object
-`JTC.object`。返回一个校验object型手的校验器，返回校验类型集合类。
+`JTC.object`。返回一个校验object型数据的校验器，返回校验类型集合类。
 
 ## 连词
 校验类型集合类和校验器支持使用连词，连词没有作用，只会返回对象本身。
@@ -76,6 +76,10 @@ console.log(validateResult.successful); // true
 * should.
 * could.
 * and.
+
+```javascript
+JTC.number.is.lt(10).and.could.positive
+```
 
 ## JTypeBool
 用于校验bool型数据的校验器。支持链式调用。
