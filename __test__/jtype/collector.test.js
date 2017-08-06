@@ -1,8 +1,8 @@
 // @flow
 
 import {
-    Joi,
-    JTC
+    validator as Joi,
+    typeCollector as JTC
 } from '../../src/';
 
 import {

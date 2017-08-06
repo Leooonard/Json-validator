@@ -23,6 +23,6 @@ class Joi {
 };
 
 export {
-    Joi,
-    JTC
+    Joi as validator,
+    JTC as typeCollector
 };
