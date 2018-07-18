@@ -205,6 +205,12 @@ var JType = function () {
             });
         }
     }, {
+        key: 'default',
+        value: function _default(defaultValue) {
+            this._collector.default = defaultValue;
+            return this;
+        }
+    }, {
         key: '_$getMatchers',
         value: function _$getMatchers() {
             return this._matchers;
@@ -274,6 +280,7 @@ var JTypeCollector = function () {
 
         this._returnControl = this._returnControl.bind(this);
         this._typers = [];
+        this._defaultValue = undefined;
     }
 
     _createClass(JTypeCollector, [{
@@ -312,9 +319,19 @@ var JTypeCollector = function () {
 
             if (result) {
                 return successResult;
+            } else if (this._defaultValue !== undefined) {
+                return (0, _result.wrapResult)(true, this._defaultValue);
             } else {
                 return errorResult;
             }
+        }
+    }, {
+        key: 'default',
+        set: function set(defaultValue) {
+            this._defaultValue = defaultValue;
+        },
+        get: function get() {
+            return this._defaultValue;
         }
     }, {
         key: 'bool',
@@ -1219,7 +1236,12 @@ var JTypeObject = function (_JType) {
                 }
 
                 if (!findValueKey) {
-                    return (0, _result.wrapResult)(false, undefined, 'attribute: ' + shapeKey + ' not found');
+                    var defaultValue = shapeProperty.default;
+                    if (defaultValue !== undefined) {
+                        value[shapeKey] = defaultValue;
+                    } else {
+                        return (0, _result.wrapResult)(false, undefined, 'attribute: ' + shapeKey + ' not found');
+                    }
                 }
             }
 
