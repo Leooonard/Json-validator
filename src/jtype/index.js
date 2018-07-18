@@ -69,6 +69,11 @@ class JType {
         });
     }
 
+    default(defaultValue) {
+        this._collector.default = defaultValue;
+        return this;
+    }
+
     _$getMatchers () {
         return this._matchers;
     }

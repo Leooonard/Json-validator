@@ -10,6 +10,10 @@ import {
     getResultMessage
 } from '../../src/util/result';
 
+import {
+    JTC
+} from '../../src/jtype/collector';
+
 describe('validate api', () => {
     describe('test JTypeString', () => {
         let stringType = undefined;
@@ -29,6 +33,14 @@ describe('validate api', () => {
                     expect(isSuccessResult(stringType.validate(5))).toBeFalsy();
                     expect(getResultValue(stringType.validate(5))).toBe(undefined);
                     console.log(getResultMessage(stringType.validate(5)));
+                });
+            });
+
+            describe('should use default value when unmatch', () => {
+                test('\'aaa\' is string filter result is \'aaa\'', () => {
+                    const collector = JTC.string.gt(5).default('123').getCollector();
+                    expect(isSuccessResult(collector.validate('aaa'))).toBeTruthy();
+                    expect(getResultValue(collector.validate('aaa'))).toBe('123');
                 });
             });
 

@@ -32,6 +32,7 @@ class JTypeCollector {
     constructor () {
         this._returnControl = this._returnControl.bind(this);
         this._typers = [];
+        this._defaultValue = undefined;
     }
 
     _getTypers () {
@@ -45,6 +46,14 @@ class JTypeCollector {
 
     _returnControl () {
         return this;
+    }
+
+    set default(defaultValue) {
+        this._defaultValue = defaultValue;
+    }
+
+    get default() {
+        return this._defaultValue;
     }
 
     get bool () {
@@ -114,6 +123,8 @@ class JTypeCollector {
 
         if (result) {
             return successResult;
+        } else if (this._defaultValue !== undefined) {
+            return wrapResult(true, this._defaultValue);
         } else {
             return errorResult;
         }

@@ -58,6 +58,35 @@ describe('validate api', () => {
                 });
             });
 
+            describe('should use default value when unmatch', () => {
+                test('{a: -1} should set default value as {a: 5}', () => {
+                    expect(isSuccessResult(objectType.matchShape({
+                        a: JTC.number.gt(0).default(5)
+                    }).validate({
+                        a: -1
+                    }))).toBeTruthy();
+                    expect(getResultValue(objectType.matchShape({
+                        a: JTC.number.gt(0).default(5)
+                    }).validate({
+                        a: -1
+                    }))).toEqual({
+                        a: 5
+                    });
+                });
+
+                test('undefined should set default value as {a: 5}', () => {
+                    const collector = JTC.object.matchShape({
+                        a: JTC.number
+                    }).default({
+                        a: 5
+                    }).getCollector();
+                    expect(isSuccessResult(collector.validate(5))).toBeTruthy();
+                    expect(getResultValue(collector.validate(5))).toEqual({
+                        a: 5
+                    });
+                });
+            });
+
             describe('matchShape', () => {
                 test('{a: 1} should have a attribute a that value is a number filter result is {a: 1}', () => {
                     expect(isSuccessResult(objectType.matchShape({

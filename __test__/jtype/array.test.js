@@ -48,6 +48,14 @@ describe('validate api', () => {
                 });
             });
 
+            describe('should use default value when unmatch', () => {
+                test('should use default value [1, 2, 3]', () => {
+                    const collector = JTC.array.default([1, 2, 3]).getCollector();
+                    expect(isSuccessResult(collector.validate(5))).toBeTruthy();
+                    expect(getResultValue(collector.validate(5))).toEqual([1, 2, 3]);
+                });
+            });
+
             describe('eq', () => {
                 test('[]\'s length should equal 0 filter result is []', () => {
                     expect(isSuccessResult(arrayType.eq(0).validate([]))).toBeTruthy();

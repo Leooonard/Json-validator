@@ -86,7 +86,12 @@ class JTypeObject extends JType {
             }
 
             if (!findValueKey) {
-                return wrapResult(false, undefined, `attribute: ${shapeKey} not found`);
+                const defaultValue = shapeProperty.default;
+                if (defaultValue !== undefined) {
+                    value[shapeKey] = defaultValue;
+                } else {
+                    return wrapResult(false, undefined, `attribute: ${shapeKey} not found`);
+                }
             }
         }
 
